@@ -1,0 +1,13 @@
+{
+  "404": {
+    "code": "Codice: 404",
+    "desc": "Spiacenti, la pagina che stai cercando non è stata trovata.",
+    "title": "Pagina non trovata"
+  },
+  "500": {
+    "code": "Codice: 500",
+    "desc": "Ci scusiamo per l'errore, per favore riprova.",
+    "title": "Errore interno"
+  },
+  "return": "Torna indietro"
+}

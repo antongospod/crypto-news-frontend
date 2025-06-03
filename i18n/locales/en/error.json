@@ -1,0 +1,13 @@
+{
+  "404": {
+    "code": "Code: 404",
+    "desc": "Sorry, the page you are looking for could not be found.",
+    "title": "Page Not Found"
+  },
+  "500": {
+    "code": "Code: 500",
+    "desc": "Sorry we messed up, please try again..",
+    "title": "Internal Error"
+  },
+  "return": "Return"
+}
