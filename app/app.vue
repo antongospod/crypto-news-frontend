@@ -130,3 +130,30 @@ useSeoMeta({
     </Body>
   </Html>
 </template>
+
+<style>
+/* Animation отключена для переходов (View Transitions) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Анимация при переключении на светлую тему */
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+}
+
+/* Анимация при переключении на тёмную тему */
+.dark::view-transition-old(root) {
+  z-index: 2;
+}
+
+.dark::view-transition-new(root) {
+  z-index: 1;
+}
+</style>
