@@ -126,6 +126,7 @@ useSeoMeta({
       </template>
     </Head>
     <Body class="m0 font-mono core-theme">
+      <UiInfoBar />
       <NuxtPage />
     </Body>
   </Html>
