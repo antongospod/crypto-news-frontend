@@ -35,13 +35,54 @@ useHead({
       href: '/site.webmanifest',
     },
     {
+      rel: 'preload',
+      href: '/fonts/IBMPlexMono-Regular.woff2',
+      as: 'font',
+      type: 'font/woff2',
+      crossorigin: 'anonymous',
+    },
+    {
+      rel: 'preload',
+      href: '/fonts/IBMPlexMono-Italic.woff2',
+      as: 'font',
+      type: 'font/woff2',
+      crossorigin: 'anonymous',
+    },
+    {
+      rel: 'preload',
+      href: '/fonts/IBMPlexMono-Medium.woff2',
+      as: 'font',
+      type: 'font/woff2',
+      crossorigin: 'anonymous',
+    },
+    {
+      rel: 'preload',
+      href: '/fonts/IBMPlexMono-MediumItalic.woff2',
+      as: 'font',
+      type: 'font/woff2',
+      crossorigin: 'anonymous',
+    },
+    {
+      rel: 'preload',
+      href: '/fonts/IBMPlexMono-SemiBold.woff2',
+      as: 'font',
+      type: 'font/woff2',
+      crossorigin: 'anonymous',
+    },
+    {
+      rel: 'preload',
+      href: '/fonts/IBMPlexMono-SemiBoldItalic.woff2',
+      as: 'font',
+      type: 'font/woff2',
+      crossorigin: 'anonymous',
+    },
+    {
       rel: 'preconnect',
       href: 'https://cdn.cryptocenter.finance',
       crossorigin: 'anonymous',
     },
   ],
   meta: [
-    { name: 'naver-site-verification', content: '' },
     { name: 'og:logo', content: '/apple-touch-icon.png' },
   ],
 })
@@ -60,7 +101,7 @@ useSeoMeta({
 </script>
 
 <template>
-  <Html v-if="head.htmlAttrs" :lang="head.htmlAttrs.lang">
+  <Html v-if="head.htmlAttrs" :lang="head.htmlAttrs.lang" class="scroll-pt-[73px] antialiased">
     <Head>
       <template
         v-for="link in head.link"
@@ -84,7 +125,7 @@ useSeoMeta({
         />
       </template>
     </Head>
-    <Body>
+    <Body class="m0 font-mono core-theme">
       <NuxtPage />
     </Body>
   </Html>
