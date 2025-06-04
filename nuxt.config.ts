@@ -83,6 +83,9 @@ export default defineNuxtConfig({
     storageKey: 'cryptocenter-color-mode',
   },
   i18n: i18nConfig,
+  css: [
+    'normalize.css/normalize.css',
+  ],
   routeRules: {
     '/**': {
       static: true,
