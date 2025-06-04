@@ -8,14 +8,12 @@ const links = useNavLinks(
 const { locales, setLocale, locale, t } = useI18n()
 const switchLocalePath = useSwitchLocalePath()
 
-const availableLocales = computed(() =>
-  locales.value.filter(i => i.code),
-)
+const availableLocales = computed(() => locales.value.filter(i => i.code))
 </script>
 
 <template>
   <header
-    class="relative grid grid-cols-[1fr_auto_1fr] h-12 items-center b-1 border-b-dark-4/10 b-solid b-l-none b-r-none b-t-none bg-element-light/80 p-2 text-black backdrop-blur-md dark:(border-b-dark-2/30 bg-element-dark/80 text-white) 2xl:px-40 md:px-6 xl:px-25"
+    class="relative h-12 flex items-center justify-between b-1 border-b-dark-4/10 b-solid b-l-none b-r-none b-t-none bg-element-light/80 p-2 text-black backdrop-blur-md md:(grid grid-cols-[1fr_auto_1fr] justify-between px-6) dark:(border-b-dark-2/30 bg-element-dark/80 text-white) 2xl:px-40 xl:px-25"
   >
     <!-- Левая часть -->
     <div class="flex items-center">
@@ -63,5 +61,8 @@ const availableLocales = computed(() =>
         </NuxtLink>
       </div>
     </div>
+
+    <!-- Мобильное меню -->
+    <MobileNav class="flex md:hidden" :links="links" />
   </header>
 </template>
