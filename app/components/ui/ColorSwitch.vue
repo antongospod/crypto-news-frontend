@@ -15,7 +15,7 @@ const { t } = useI18n()
 <template>
   <button
     class="mr-0 inline-block w-8 flex cursor-pointer items-center justify-center border-none bg-transparent"
-    :aria-label="t('v2.app.sr.colorSwitch')"
+    :aria-label="t('app.colorSwitch')"
     @click="switchColor"
   >
     <ClientOnly>
