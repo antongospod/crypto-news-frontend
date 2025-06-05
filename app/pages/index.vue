@@ -9,8 +9,8 @@ useLangMeta('page.home.seo', seoImage)
     <section aria-labelledby="hero">
       <HomeHero />
     </section>
-    <section aria-labelledby="partner-list" class="mb24">
-      Partner List
+    <section aria-labelledby="brand-list" class="mb24">
+      <HomeBrandList />
     </section>
     <section aria-labelledby="latest-posts" class="mb32">
       Latest Posts

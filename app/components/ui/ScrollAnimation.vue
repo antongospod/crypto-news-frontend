@@ -15,7 +15,8 @@ interface ScrollAnimationProps {
   delay?: number
   threshold?: number
   once?: boolean
-  root?: Element | null
+  element?: keyof HTMLElementTagNameMap
+  root?: HTMLElement | null
   rootMargin?: string
 }
 
@@ -25,11 +26,12 @@ const props = withDefaults(defineProps<ScrollAnimationProps>(), {
   delay: 0,
   threshold: 0.1,
   once: true,
+  element: 'div',
   root: null,
   rootMargin: '0px',
 })
 
-const element = ref<HTMLElement | null>(null)
+const rootElement = ref<HTMLElement | null>(null)
 const isVisible = ref(false)
 const isReducedMotion = ref(false)
 let observer: IntersectionObserver | null = null
@@ -62,8 +64,8 @@ function createObserver() {
 }
 
 function startObserving() {
-  if (element.value && observer) {
-    observer.observe(element.value)
+  if (rootElement.value && observer) {
+    observer.observe(rootElement.value)
   }
 }
 
@@ -92,15 +94,19 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div
-    ref="element" class="scroll-animation"
-    :class="[`animation-${animation}`, isVisible ? 'is-visible' : '', isReducedMotion ? 'reduce-motion' : '']" :style="{
+  <component
+    :is="element"
+    ref="rootElement"
+    class="scroll-animation"
+    :class="[`animation-${animation}`, isVisible ? 'is-visible' : '', isReducedMotion ? 'reduce-motion' : '']"
+    :style="{
       '--animation-duration': `${duration}ms`,
       '--animation-delay': `${delay}ms`,
-    }" role="presentation"
+    }"
+    role="presentation"
   >
     <slot />
-  </div>
+  </component>
 </template>
 
 <style scoped>
