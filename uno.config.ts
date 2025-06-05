@@ -155,6 +155,24 @@ export default defineConfig({
   ],
   transformers: [transformerVariantGroup(), transformerDirectives()],
   theme: {
+    animation: {
+      keyframes: {
+        'slow-pulse': '{0%, 100% { opacity: 1; } 50% { opacity: 0.5; }}',
+        'float': '{0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); }}',
+      },
+      durations: {
+        'slow-pulse': '4s',
+        'float': '6s',
+      },
+      timingFns: {
+        'slow-pulse': 'cubic-bezier(0.4, 0, 0.6, 1)',
+        'float': 'ease-in-out',
+      },
+      counts: {
+        'slow-pulse': 'infinite',
+        'float': 'infinite',
+      },
+    },
     colors: {
       brand: {
         dark: '#007BFF',
@@ -174,6 +192,7 @@ export default defineConfig({
       'bg-element-light dark:(bg-element-dark text-white) text-black',
     'core-border': 'dark:b-dark4 b-gray-3 b-1 b-solid',
     'core-ui': 'dark:(bg-dark9 text-white) bg-gray-100 text-black',
+    'pulse-overlay': 'absolute z-10 h-8 w-full animate-slow-pulse rounded-md bg-blue-6 blur-2xl will-change-transform -top-1 dark:bg-yellow-400/30',
   },
   content: {
     pipeline: {

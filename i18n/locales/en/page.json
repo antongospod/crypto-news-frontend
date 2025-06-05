@@ -1,5 +1,11 @@
 {
   "home": {
+    "hero": {
+      "cta": "Start the Journey",
+      "heading": "You’re not in crypto for news. Crypto. Finance. Future.",
+      "subhead": "Stay informed, stay ahead — trusted insights into the world of digital assets.",
+      "tagline": "Shape the future"
+    },
     "seo": {
       "description": "Get the latest cryptocurrency news, blockchain insights, and expert analysis. CryptoCenter keeps you informed in the ever-evolving world of digital finance.",
       "title": "Crypto News, Blockchain Trends & Market Insights"

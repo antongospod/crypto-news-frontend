@@ -1,5 +1,11 @@
 {
   "home": {
+    "hero": {
+      "cta": "Inizia il viaggio",
+      "heading": "Non sei qui per le notizie. Cripto. Finanza. Futuro.",
+      "subhead": "Rimani aggiornato, rimani avanti — approfondimenti affidabili sul mondo degli asset digitali.",
+      "tagline": "Plasma il futuro"
+    },
     "seo": {
       "description": "Ultime notizie su criptovalute, approfondimenti sulla blockchain e analisi dei mercati. CryptoCenter ti guida nel mondo della finanza digitale.",
       "title": "Notizie Cripto, Tendenze Blockchain e Analisi di Mercato"

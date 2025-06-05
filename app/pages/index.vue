@@ -7,7 +7,7 @@ useLangMeta('page.home.seo', seoImage)
 <template>
   <main class="flex flex-col justify-center">
     <section aria-labelledby="hero">
-      Hero Block
+      <HomeHero />
     </section>
     <section aria-labelledby="partner-list" class="mb24">
       Partner List
