@@ -1,13 +1,13 @@
 ---
 title: "Polygon's zkEVM Mainnet Achieves New Milestone, Expanding Layer 2 Landscape"
 date: "05.06.2025"
-tag: "Layer 2, DeFi, Ethereum Scaling"
+tag: "Layer 2, DeFi"
 img: "https://i.ibb.co/N2Yf0RmN/postint.webp"
-description: "Polygon's zkEVM mainnet surpasses $100M TVL, signaling robust growth for Layer 2 solutions and a transformative impact on DeFi scalability and privacy."
+description: "Polygon's zkEVM mainnet surpasses $100M TVL."
 alt: "Polygon zkEVM mainnet graphic illustrating its growth in Total Value Locked"
 toc: true
 source: "DeFiBank"
-feature: false
+feature: true
 ---
 
 # Polygon's zkEVM Mainnet Achieves New Milestone, Expanding Layer 2 Landscape

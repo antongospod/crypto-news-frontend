@@ -9,11 +9,11 @@ useLangMeta('page.home.seo', seoImage)
     <section aria-labelledby="hero">
       <HomeHero />
     </section>
-    <section aria-labelledby="brand-list" class="mb24">
+    <section aria-labelledby="brand-list">
       <HomeBrandList />
     </section>
     <section aria-labelledby="latest-posts" class="mb32">
-      Latest Posts
+      <HomePostsFeature />
     </section>
     <section aria-labelledby="pages-card" class="mb32">
       Pages Card

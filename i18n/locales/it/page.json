@@ -6,6 +6,11 @@
       "subhead": "Rimani aggiornato, rimani avanti — approfondimenti affidabili sul mondo degli asset digitali.",
       "tagline": "Plasma il futuro"
     },
+    "news": {
+      "latest": "Notizie recenti",
+      "description": "Controlla regolarmente per notizie importanti e nuovi contenuti.",
+      "featuredNews": "Notizie in evidenza"
+    },
     "seo": {
       "description": "Ultime notizie su criptovalute, approfondimenti sulla blockchain e analisi dei mercati. CryptoCenter ti guida nel mondo della finanza digitale.",
       "title": "Notizie Cripto, Tendenze Blockchain e Analisi di Mercato"

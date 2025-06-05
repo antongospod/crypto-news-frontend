@@ -7,7 +7,7 @@ description: "Polygon's zkEVM mainnet surpasses $100 million in Total Value Lock
 alt: "Polygon zkEVM milestone visual expansion blockchain"
 toc: true
 source: "DeFiBank"
-feature: false
+feature: true
 
 ---
 

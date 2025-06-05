@@ -7,7 +7,7 @@ description: "Polygon zkEVM supera i 100 milioni di TVL, segnando un'importante 
 alt: "Interfaccia di Polygon zkEVM con dashboard che mostra TVL in crescita"
 toc: true
 source: "DeFiBank"
-feature: false
+feature: true
 ---
 
 Negli ultimi mesi, l’ecosistema Polygon ha raggiunto un traguardo significativo: il mainnet di zkEVM ha superato i 100 milioni di dollari in Total Value Locked (TVL), segnando una svolta fondamentale non solo per la piattaforma stessa, ma anche per lo sviluppo delle soluzioni Layer 2 all’interno dell’universo Ethereum.
