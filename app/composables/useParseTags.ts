@@ -1,13 +1,14 @@
-export function useParseTags(raw: unknown, max = 3): string[] | string {
-    let tags: string[] = []
-
+export function useParseTags(raw: unknown): string {
     if (Array.isArray(raw)) {
-        tags = raw.map(tag => String(tag).trim()).filter(Boolean)
-    } else if (typeof raw === 'string') {
-        tags = raw.split(',').map(tag => tag.trim()).filter(Boolean)
+        return String(raw.find(Boolean)?.toString().trim() ?? '')
     }
 
-    const sliced = tags.slice(0, max)
+    if (typeof raw === 'string') {
+        return raw
+            .split(',')
+            .map(tag => tag.trim())
+            .find(Boolean) ?? ''
+    }
 
-    return max === 1 ? (sliced[0] ?? '') : sliced
+    return ''
 }

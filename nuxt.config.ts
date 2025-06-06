@@ -88,14 +88,6 @@ export default defineNuxtConfig({
   css: [
     'normalize.css/normalize.css',
   ],
-  routeRules: {
-    '/**': {
-      static: true,
-      headers: {
-        'Cache-Control': 'public, max-age=31536000, immutable',
-      },
-    },
-  },
   experimental: {
     headNext: true,
     viewTransition: true,

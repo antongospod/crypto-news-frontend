@@ -112,7 +112,7 @@ onMounted(() => {
             <div class="children:(inline-flex core-border rounded-md core-ui px-4 py-1.5 text-xs font-mono op80 dark:op100) space-x-2 mb-2">
               <UiDate v-if="article.date" :date="article.date" />
               <p v-if="article.tag">
-                {{ useParseTags(article.tag, 1) }}
+                {{ useParseTags(article.tag) }}
               </p>
             </div>
 

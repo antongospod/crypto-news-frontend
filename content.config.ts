@@ -17,14 +17,14 @@ export default defineContentConfig({
             source: 'en/news/**/*.md',
             schema: ArticleSchema
         }),
-        it: defineCollection({
-            type: 'page',
-            source: 'it/news/**/*.md',
-            schema: ArticleSchema
-        }),
         ru: defineCollection({
             type: 'page',
             source: 'ru/news/**/*.md',
+            schema: ArticleSchema
+        }),
+        it: defineCollection({ // итальянский
+            type: 'page',
+            source: 'news/**/*.md',
             schema: ArticleSchema
         })
     }
