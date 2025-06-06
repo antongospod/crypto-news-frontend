@@ -15,33 +15,33 @@ interface Highlight {
 }
 
 const trends: Trend[] = [
-  { id: 1, name: t('page.home.pulseCard.trend1') },
-  { id: 2, name: t('page.home.pulseCard.trend2') },
-  { id: 3, name: t('page.home.pulseCard.trend3') },
-  { id: 4, name: t('page.home.pulseCard.trend4') },
-  { id: 5, name: t('page.home.pulseCard.trend5') },
+  { id: 1, name: t('home.pulseCard.trend1') },
+  { id: 2, name: t('home.pulseCard.trend2') },
+  { id: 3, name: t('home.pulseCard.trend3') },
+  { id: 4, name: t('home.pulseCard.trend4') },
+  { id: 5, name: t('home.pulseCard.trend5') },
 ]
 
 const highlights: Highlight[] = [
   {
     id: 1,
-    title: t('page.home.pulseCard.highlight1.title'),
-    subtext: t('page.home.pulseCard.highlight1.subtext'),
-    month: t('page.home.pulseCard.highlight1.month'),
+    title: t('home.pulseCard.highlight1.title'),
+    subtext: t('home.pulseCard.highlight1.subtext'),
+    month: t('home.pulseCard.highlight1.month'),
     reference: 'https://www.investors.com/news/bitcoin-circle-ipo-crcl-stock-stablecoin-usdc-trump-media-bitcoin-etf/',
   },
   {
     id: 2,
-    title: t('page.home.pulseCard.highlight2.title'),
-    subtext: t('page.home.pulseCard.highlight2.subtext'),
-    month: t('page.home.pulseCard.highlight2.month'),
+    title: t('home.pulseCard.highlight2.title'),
+    subtext: t('home.pulseCard.highlight2.subtext'),
+    month: t('home.pulseCard.highlight2.month'),
     reference: 'https://news.bitcoin.com/bitcoin-goes-mainstream-highlights-from-the-bitcoin-2025-conference/',
   },
   {
     id: 3,
-    title: t('page.home.pulseCard.highlight3.title'),
-    subtext: t('page.home.pulseCard.highlight3.subtext'),
-    month: t('page.home.pulseCard.highlight3.month'),
+    title: t('home.pulseCard.highlight3.title'),
+    subtext: t('home.pulseCard.highlight3.subtext'),
+    month: t('home.pulseCard.highlight3.month'),
     reference: 'https://cointelegraph.com/news/trump-truth-social-files-spot-bitcoin-etf',
   },
 ];
@@ -57,7 +57,7 @@ const highlights: Highlight[] = [
           animation="zoom-in"
           :duration="800"
       >
-        {{ t('page.home.pulseCard.title') }}
+        {{ t('home.pulseCard.title') }}
       </UiScrollAnimation>
       <Icon name="lucide:heart-pulse" class="h-8 w-8 text-black sm:h-12 sm:w-12 animate-heart-beat" aria-hidden="true" />
     </div>
@@ -66,7 +66,7 @@ const highlights: Highlight[] = [
         <div class="mb-3 flex items-center sm:mb-4">
           <Icon name="lucide:trending-up" class="mr-2 h-5 w-5 flex-shrink-0 text-4 text-yellow-4" />
           <h3 id="trend-title" class="text-lg text-yellow-4 font-semibold sm:text-xl">
-            {{ t('page.home.pulseCard.trendTitle') }}
+            {{ t('home.pulseCard.trendTitle') }}
           </h3>
         </div>
         <ul role="list" class="p0 space-y-3">
@@ -90,7 +90,7 @@ const highlights: Highlight[] = [
         <div class="mb-3 flex items-center sm:mb-4">
           <Icon name="lucide:sun" class="mr-2 h-5 w-5 flex-shrink-0 text-white" aria-hidden="true" />
           <h3 id="recent-breaches-title" class="text-lg text-white font-semibold sm:text-xl">
-            {{ t('page.home.pulseCard.highlightsTitle') }}
+            {{ t('home.pulseCard.highlightsTitle') }}
           </h3>
         </div>
         <ul role="list" class="list-none p0 space-y-3">
@@ -106,7 +106,7 @@ const highlights: Highlight[] = [
             <NuxtLink
                 :to="highlight.reference"
                 class="relative grid grid-cols-[1fr,auto] items-start gap-2 decoration-none" target="_blank"
-                :aria-label="`${highlight.title} - ${highlight.subtext} ${t('page.home.pulseCard.ariaLabel')}`"
+                :aria-label="`${highlight.title} - ${highlight.subtext} ${t('home.pulseCard.ariaLabel')}`"
             >
               <div class="min-w-0">
                 <p class="truncate text-sm text-black font-semibold sm:text-base">
@@ -126,7 +126,7 @@ const highlights: Highlight[] = [
       </section>
     </div>
     <p class="mt-4 px-1 text-xs text-inherit op70 sm:text-sm">
-      {{ t('page.home.pulseCard.source') }}
+      {{ t('home.pulseCard.source') }}
     </p>
   </div>
 </template>

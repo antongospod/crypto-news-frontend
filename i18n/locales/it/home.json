@@ -1,0 +1,56 @@
+{
+  "hero": {
+    "cta": "Inizia il viaggio",
+    "heading": "Non sei qui per le notizie. Cripto. Finanza. Futuro.",
+    "subhead": "Rimani aggiornato, rimani avanti — approfondimenti affidabili sul mondo degli asset digitali.",
+    "tagline": "Plasma il futuro"
+  },
+  "news": {
+    "latest": "Notizie recenti",
+    "description": "Controlla regolarmente per notizie importanti e nuovi contenuti.",
+    "featuredNews": "Notizie in evidenza"
+  },
+  "pageCard": {
+    "article": "Rimani aggiornato con le ultime notizie su blockchain, DeFi e il mercato delle criptovalute.",
+    "about": "Scopri chi siamo, la nostra missione e come ti aiutiamo a orientarti nel mondo delle cripto."
+  },
+  "share": {
+    "title": "Condividi",
+    "description": "Invia il link a un amico o salvalo per dopo.",
+    "manual": "Il tuo browser non supporta la condivisione rapida. Copia il link manualmente."
+  },
+  "pulseCard": {
+    "title": "Crypto Pulse 2025",
+    "highlightsTitle": "Momenti Salienti Recenti",
+    "source": "Basato su rapporti pubblici sul settore crypto e documenti di borsa. I dati rappresentano valori e tendenze approssimative.",
+    "ariaLabel": "(Leggi di più in una nuova scheda)",
+    "trendTitle": "Tendenze",
+    "trend1": "Adozione istituzionale in forte crescita",
+    "trend2": "Integrazione di IA e Blockchain",
+    "trend3": "Crescita di Stablecoin e Asset Reali Tokenizzati (RWA)",
+    "trend4": "Convergenza tra DeFi e Finanza Tradizionale",
+    "trend5": "Regolamentazione intelligente e automazione della conformità",
+    "highlight1": {
+      "title": "IPO di Circle",
+      "subtext": "IPO al NYSE: raccolti 1,1 miliardi $, azioni in rialzo del 168%",
+      "month": "Giugno"
+    },
+    "highlight2": {
+      "title": "Conferenza Bitcoin 2025",
+      "subtext": "35.000 partecipanti a Las Vegas, BTC ha raggiunto $111K, forte presenza politica",
+      "month": "Maggio"
+    },
+    "highlight3": {
+      "title": "ETF Bitcoin di Truth Social",
+      "subtext": "Trump Media presenta domanda per ETF Bitcoin, segnale di crescente influenza finanziaria",
+      "month": "Giugno"
+    }
+  },
+  "seo": {
+    "description": "Ultime notizie su criptovalute, approfondimenti sulla blockchain e analisi dei mercati. CryptoCenter ti guida nel mondo della finanza digitale.",
+    "title": "Notizie Cripto, Tendenze Blockchain e Analisi di Mercato"
+  },
+  "a11y": {
+    "mouseicon": "Scorri in basso"
+  }
+}

@@ -7,17 +7,17 @@ const pages = [
   {
     path: '/news',
     title: 'links.news',
-    description: 'page.home.pageCard.article',
+    description: 'home.pageCard.article',
   },
   {
     path: '/about',
     title: 'links.about',
-    description: 'page.home.pageCard.about',
+    description: 'home.pageCard.about',
   },
   {
     isShare: true,
-    title: 'page.home.share.title',
-    description: 'page.home.share.description',
+    title: 'home.share.title',
+    description: 'home.share.description',
     onClick: shareSite,
   },
 ]

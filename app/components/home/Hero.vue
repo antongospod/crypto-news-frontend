@@ -17,7 +17,7 @@ const { t } = useI18n()
           role="doc-subtitle"
         >
           <Icon name="lucide:sparkles" class="h-6 w-6 text-inherit" aria-hidden="true" />
-          <span>{{ t('page.home.hero.tagline') }}</span>
+          <span>{{ t('home.hero.tagline') }}</span>
         </div>
       </UiScrollAnimation>
       <UiScrollAnimation animation="zoom-in" :duration="1200">
@@ -26,11 +26,11 @@ const { t } = useI18n()
             id="hero"
             class="relative m-0 mb-10 max-w-[90%] max-w-4xl w-full text-5xl text-black md:text-7xl dark:text-white"
           >
-            {{ t('page.home.hero.heading') }}
+            {{ t('home.hero.heading') }}
           </h1>
         </div>
         <p class="mx-auto max-w-[90%] max-w-lg w-full text-sm text-black font-300 op-70 md:text-lg dark:text-white">
-          {{ t('page.home.hero.subhead') }}
+          {{ t('home.hero.subhead') }}
         </p>
       </UIScrollAnimation>
 
@@ -40,7 +40,7 @@ const { t } = useI18n()
           to="/news"
         >
           <span class="m-0">
-            {{ t('page.home.hero.cta') }}
+            {{ t('home.hero.cta') }}
           </span>
           <Icon name="lucide:arrow-right" class="h-5 w-5" aria-hidden="true" />
         </NuxtLinkLocale>

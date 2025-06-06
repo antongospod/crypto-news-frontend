@@ -1,15 +1,6 @@
 <script setup lang="ts">
 const { locale, t } = useI18n()
 
-const parseTags = (raw: unknown): string[] => {
-  if (typeof raw !== 'string') return []
-  return raw
-      .split(',')
-      .map(tag => tag.trim())
-      .slice(0, 3)
-      .filter(tag => tag.length > 0)
-}
-
 const { data: features } = await useAsyncData('featured-posts', () => {
   return queryCollection(locale.value)
       .where('feature', '=', true)
@@ -32,7 +23,7 @@ const { data: features } = await useAsyncData('featured-posts', () => {
             animation="fade-down"
             :duration="800"
         >
-          {{ t('page.home.news.latest') }}
+          {{ t('home.news.latest') }}
         </UiScrollAnimation>
         <UiScrollAnimation
             class="m0 text-sm text-dark-400 dark:text-gray-200"
@@ -41,13 +32,13 @@ const { data: features } = await useAsyncData('featured-posts', () => {
             :duration="800"
             :delay="100"
         >
-          {{ t('page.home.news.description') }}
+          {{ t('home.news.description') }}
         </UiScrollAnimation>
       </div>
     </div>
     <div
       class="grid auto-rows-fr grid-cols-1 mx-auto max-w-lg justify-items-center gap-4 px6 pb10 lg:grid-cols-3 md:grid-cols-2 md:max-w-5xl children:(core-border rounded-lg) 2xl:px45 xl:px25"
-      role="feed" :aria-label="t('page.home.news.featuredPosts')"
+      role="feed" :aria-label="t('home.news.featuredPosts')"
     >
       <article
         v-for="(feature, key) in features?.slice(0, 3)"
@@ -63,7 +54,7 @@ const { data: features } = await useAsyncData('featured-posts', () => {
           <NuxtLinkLocale class="group-hover text-black no-underline dark:text-white" :to="feature.path">
             <div v-if="feature.tag" class="mb-2 flex flex-wrap gap-1">
               <span
-                  v-for="(tag, i) in parseTags(feature.tag)"
+                  v-for="(tag, i) in useParseTags(feature.tag, 3)"
                   :key="i"
                   class="rounded-md bg-light2 px4 py1 text-sm op-90 core-border dark:bg-dark8"
               >
@@ -118,7 +109,7 @@ const { data: features } = await useAsyncData('featured-posts', () => {
           >
             <div v-if="feature.tag" class="mb-2 flex flex-wrap gap-1">
               <span
-                  v-for="(tag, i) in parseTags(feature.tag)"
+                  v-for="(tag, i) in useParseTags(feature.tag, 1)"
                   :key="i"
                   class="rounded-md bg-light2 px4 py1 text-sm op-90 core-border dark:bg-dark8"
               >

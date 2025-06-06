@@ -1,5 +1,5 @@
 <script setup lang="ts">
-useLangMeta('page.home.seo', '/images/home/cryptocenter-cover.webp')
+useLangMeta('home.seo', '/images/home/cryptocenter-cover.webp')
 </script>
 
 <template>
