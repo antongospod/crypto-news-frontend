@@ -28,7 +28,6 @@ export const i18nConfig = {
   lazy: false,
   strategy: 'prefix_except_default',
   locales: LOCALES,
-  hmr: true,
   missingWarn: false,
   fallbackWarn: false,
   customRoutes: 'config',

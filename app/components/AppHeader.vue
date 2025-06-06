@@ -44,21 +44,20 @@ const availableLocales = computed(() => locales.value.filter(i => i.code))
         class="inline-flex gap-1 overflow-hidden rounded-full p-1 core-border core-ui"
         role="navigation"
       >
-        <NuxtLink
+        <a
           v-for="localeOption in availableLocales"
           :key="localeOption.code"
+          :href="switchLocalePath(localeOption.code)"
           :aria-label="t('app.langSelect') + localeOption.name"
-          :to="switchLocalePath(localeOption.code)"
           class="rounded-full px-3 py-1 text-center text-sm font-medium decoration-none transition-colors duration-200 hover:bg-gray200 dark:hover:bg-dark-600"
           :class="[
             locale === localeOption.code
               ? 'bg-black text-white pointer-events-none dark:(bg-white text-black)'
-              : 'text-black dark:text-inherit',
+              : 'text-black dark:text-inherit'
           ]"
-          @click.prevent.capture="setLocale(localeOption.code)"
         >
           {{ localeOption.code }}
-        </NuxtLink>
+        </a>
       </div>
     </div>
 
