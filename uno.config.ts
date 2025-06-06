@@ -171,6 +171,7 @@ export default defineConfig({
       counts: {
         'slow-pulse': 'infinite',
         'float': 'infinite',
+        'heart-beat': 'infinite',
       },
     },
     colors: {

@@ -30,7 +30,7 @@ function getSvgIconUrl(name) {
         element="li"
         animation="fade-up"
         :delay="link.delay"
-        :duration="1000"
+        :duration="1200"
       >
         <NuxtLink :href="link.url" target="_blank" class="group inline-block">
           <div

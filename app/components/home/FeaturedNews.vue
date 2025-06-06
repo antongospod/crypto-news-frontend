@@ -58,7 +58,7 @@ const { data: features } = await useAsyncData('featured-posts', () => {
           class="col-span-1 cursor-pointer p-5 dark:text-white"
           animation="fade-down"
           :delay="key * 250"
-          :duration="1000"
+          :duration="1200"
         >
           <NuxtLinkLocale class="group-hover text-black no-underline dark:text-white" :to="feature.path">
             <div v-if="feature.tag" class="mb-2 flex flex-wrap gap-1">
@@ -110,7 +110,7 @@ const { data: features } = await useAsyncData('featured-posts', () => {
             class="col-span-1 cursor-pointer p-5 dark:text-white"
             animation="fade-down"
             :delay="key * 250"
-            :duration="1000"
+            :duration="1200"
         >
           <NuxtLinkLocale
             class="group-hover text-black no-underline dark:text-white" :to="feature.path"

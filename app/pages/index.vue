@@ -17,7 +17,7 @@ useLangMeta('page.home.seo', '/images/home/cryptocenter-cover.webp')
       <LazyHomePagesCard />
     </section>
     <section aria-labelledby="crypto-pulse" class="mb32">
-      Crypto Pulse
+      <LazyHomePulseCard />
     </section>
   </main>
 </template>
