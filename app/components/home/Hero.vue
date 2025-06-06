@@ -36,13 +36,13 @@ const { t } = useI18n()
 
       <UiScrollAnimation animation="fade-down" :duration="1000" :delay="400">
         <NuxtLinkLocale
-          class="mt-5 inline-flex transform-gpu items-center border-brand-light rounded-full border-dashed px-5 py-1.5 text-center text-blue-6 no-underline transition-all duration-300 ease-in-out will-change-transform hover:scale-105 space-x-1 core-border dark:border-yellow-3 hover:border-solid dark:text-yellow-4"
+          class="mt-6 inline-flex transform-gpu items-center justify-center border-brand-light rounded-full border-dashed px-6 py-3 text-blue-6 no-underline transition-all duration-300 ease-in-out will-change-transform hover:scale-105 space-x-2 core-border dark:border-yellow-3 hover:border-solid dark:text-yellow-4"
           to="/news"
         >
           <span class="m-0">
             {{ t('page.home.hero.cta') }}
           </span>
-          <Icon name="lucide:arrow-right" class="h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+          <Icon name="lucide:arrow-right" class="h-5 w-5" aria-hidden="true" />
         </NuxtLinkLocale>
       </UiScrollAnimation>
     </div>
