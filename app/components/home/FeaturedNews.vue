@@ -50,9 +50,9 @@ const { data: features } = await useAsyncData('featured-posts', () => {
       role="feed" :aria-label="t('page.home.news.featuredPosts')"
     >
       <article
-          v-for="(feature, key) in features?.slice(0, 3)"
-          :key="feature.path"
-          class="group transition duration-300 ease-linear hover:(scale-102 bg-white shadow-lg dark:bg-black will-change-transform transform-gpu) core-theme"
+        v-for="(feature, key) in features?.slice(0, 3)"
+        :key="feature.path"
+        class="group transition duration-300 ease-linear hover:(scale-102 bg-white shadow-lg dark:bg-black will-change-transform transform-gpu) core-theme"
       >
         <UiScrollAnimation
           class="col-span-1 cursor-pointer p-5 dark:text-white"
