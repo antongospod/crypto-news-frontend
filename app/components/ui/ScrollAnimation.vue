@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
+import {NuxtLinkLocale} from "#components";
 
 type AnimationType =
   | 'fade-up'
@@ -15,7 +16,7 @@ interface ScrollAnimationProps {
   delay?: number
   threshold?: number
   once?: boolean
-  element?: keyof HTMLElementTagNameMap
+  element?: keyof HTMLElementTagNameMap | typeof NuxtLinkLocale
   root?: HTMLElement | null
   rootMargin?: string
 }

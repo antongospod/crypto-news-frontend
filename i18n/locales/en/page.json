@@ -11,6 +11,15 @@
       "description": "Check back for key news and new content.",
       "featuredNews": "Featured News"
     },
+    "pageCard": {
+      "article": "Stay updated with the latest news in blockchain, DeFi, and the crypto market.",
+      "about": "Learn who we are, our mission, and how we help you navigate the world of crypto."
+    },
+    "share": {
+      "title": "Share",
+      "description": "Send the link to a friend or save it for later.",
+      "manual": "Your browser does not support quick sharing. Copy the link manually."
+    },
     "seo": {
       "description": "Get the latest cryptocurrency news, blockchain insights, and expert analysis. CryptoCenter keeps you informed in the ever-evolving world of digital finance.",
       "title": "Crypto News, Blockchain Trends & Market Insights"
