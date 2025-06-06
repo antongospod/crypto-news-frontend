@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import AppFooter from "~/components/ui/AppFooter.vue";
+
 const head = useLocaleHead({
   dir: true,
   seo: true,
@@ -130,6 +132,7 @@ useSeoMeta({
       <PulseOverlay />
       <UiInfoBar />
       <NuxtPage />
+      <AppFooter />
     </Body>
   </Html>
 </template>

@@ -2,5 +2,9 @@
   "lang": "Выберите язык",
   "langSelect": "Выбранный язык: ",
   "menu": "Открыть меню",
-  "colorSwitch": "Переключатель цвета"
+  "colorSwitch": "Переключатель цвета",
+  "footer": {
+    "copyright": "© Cryptocenter 2025. Все права защищены.",
+    "version": "Версия"
+  }
 }

@@ -2,5 +2,9 @@
   "lang": "Select Language",
   "langSelect": "Selected Language: ",
   "menu": "Open Menu",
-  "colorSwitch": "Colour Switcher"
+  "colorSwitch": "Colour Switcher",
+  "footer": {
+    "copyright": "© Cryptocenter 2025. All Rights reserved.",
+    "version": "Version"
+  }
 }
