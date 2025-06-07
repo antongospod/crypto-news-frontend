@@ -1,16 +1,13 @@
-# .github/workflows/deploy.yml
-name: Deploy to VPS
+name: Blue-Green Deploy
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
     branches: [ master ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -32,7 +29,7 @@ jobs:
       - name: Run tests (optional)
         run: pnpm run test || echo "No tests configured"
 
-      - name: Deploy to VPS
+      - name: Blue-Green Deploy to VPS
         if: github.ref == 'refs/heads/master'
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -42,10 +39,111 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /opt/cryptocenter
+            
+            echo "🔄 Starting Blue-Green Deployment..."
+            
+            # Обновляем код
             git pull origin master
-            docker compose down
-            docker compose build --no-cache
-            docker compose up -d
+            
+            # Собираем новый образ
+            echo "🔨 Building new image..."
+            docker compose build nuxt-app
+            
+            # Тегируем новый образ
+            docker tag cryptocenter_nuxt-app:latest cryptocenter_nuxt-app:new
+            
+            # Запускаем новый контейнер (Green) на другом порту
+            echo "🟢 Starting Green environment..."
+            docker run -d --name nuxt-app-green \
+              --network cryptocenter_app-network \
+              -e NODE_ENV=production \
+              -e NUXT_PUBLIC_SITE_NAME=CryptoCenter \
+              -e NUXT_PUBLIC_SITE_URL=https://cryptocenter.finance \
+              -p 3002:3000 \
+              cryptocenter_nuxt-app:new
+            
+            # Ждем пока новый контейнер запустится
+            echo "⏳ Waiting for Green environment to start..."
+            sleep 15
+            
+            # Функция проверки здоровья
+            check_health() {
+              local port=$1
+              local max_attempts=6
+              local attempt=1
+            
+              while [ $attempt -le $max_attempts ]; do
+                echo "🏥 Health check attempt $attempt/$max_attempts on port $port..."
+            
+                if curl -f -s --max-time 10 http://localhost:$port/ > /dev/null 2>&1; then
+                  echo "✅ Health check passed on port $port"
+                  return 0
+                fi
+            
+                if curl -f -s --max-time 10 http://localhost:$port/health > /dev/null 2>&1; then
+                  echo "✅ Health check passed on port $port (/health)"
+                  return 0
+                fi
+            
+                echo "⚠️ Health check failed on port $port, attempt $attempt/$max_attempts"
+                sleep 5
+                attempt=$((attempt + 1))
+              done
+            
+              echo "❌ Health check failed after $max_attempts attempts"
+              return 1
+            }
+            
+            # Проверяем здоровье нового контейнера
+            if check_health 3002; then
+              echo "✅ Green environment is healthy, switching traffic..."
+            
+              # Переключаем Nginx на новый контейнер
+              docker exec nginx nginx -s reload 2>/dev/null || true
+            
+              # Даем время на переключение
+              sleep 5
+            
+              # Останавливаем старый контейнер (Blue)
+              echo "🔴 Stopping Blue environment..."
+              docker compose stop nuxt-app
+              docker compose rm -f nuxt-app
+            
+              # Останавливаем Green контейнер
+              docker stop nuxt-app-green
+            
+              # Переименовываем Green в основной
+              docker rename nuxt-app-green nuxt-app
+            
+              # Запускаем основной контейнер через docker-compose
+              echo "🚀 Starting new production environment..."
+              docker compose up nuxt-app -d
+            
+              # Финальная проверка
+              sleep 10
+              if check_health 3000; then
+                echo "🎉 Blue-Green deployment completed successfully!"
+              else
+                echo "⚠️ Warning: Final health check failed, but deployment completed"
+              fi
+            
+            else
+              echo "❌ Green environment failed health check, rolling back..."
+            
+              # Останавливаем и удаляем неудачный Green контейнер
+              docker stop nuxt-app-green 2>/dev/null || true
+              docker rm nuxt-app-green 2>/dev/null || true
+              docker rmi cryptocenter_nuxt-app:new 2>/dev/null || true
+            
+              echo "🔄 Blue environment is still running"
+              exit 1
+            fi
+            
+            # Очистка старых образов и контейнеров
+            echo "🧹 Cleaning up..."
             docker system prune -f
-            echo "🎉 Deployment completed!"
+            docker image prune -f
+            
+            # Показываем финальный статус
+            echo "📊 Final status:"
             docker compose ps

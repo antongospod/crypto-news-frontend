@@ -17,9 +17,6 @@ export default defineNuxtConfig({
       environment: process.env.NODE_ENV,
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL,
       siteTitle: process.env.NUXT_PUBLIC_SITE_NAME,
-      i18n: {
-        baseUrl: process.env.NUXT_PUBLIC_SITE_URL,
-      },
     },
   },
   fonts: {
