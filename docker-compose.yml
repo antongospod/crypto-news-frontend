@@ -85,7 +85,7 @@ services:
       - '--max_housekeeping_interval=35s'
       - '--event_storage_event_limit=default=0'
       - '--event_storage_age_limit=default=0'
-      - '--disable_metrics=accelerator,cpu_topology,disk,memory_numa,tcp,udp,percpu,sched,process,hugetlb,referenced_memory,resctrl,cpuset,advtcp,memory_numa'
+      - '--disable_metrics=cpu_topology,disk,memory_numa,tcp,udp,percpu,sched,process,hugetlb,referenced_memory,resctrl,cpuset,advtcp'
       - '--docker_only'
 
   node-exporter:
