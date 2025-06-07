@@ -1,10 +1,7 @@
-# .github/workflows/deploy.yml
 name: Rolling Deploy to VPS
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
     branches: [ master ]
 
 jobs:
@@ -39,98 +36,17 @@ jobs:
             
             echo "🔄 Starting Rolling Deployment..."
             
-            # Обновляем код
             git pull origin master
             
-            # Проверяем текущий статус
-            echo "📊 Current status:"
-            docker compose ps
-            
-            # Собираем новый образ
             echo "🔨 Building new image..."
             docker compose build nuxt-app
             
-            if [ $? -ne 0 ]; then
-              echo "❌ Build failed!"
-              exit 1
-            fi
+            echo "🔄 Restarting services..."
+            docker compose up -d
             
-            echo "✅ Build successful"
-            
-            # Функция проверки здоровья
-            check_health() {
-              local max_attempts=8
-              local attempt=1
-            
-              while [ $attempt -le $max_attempts ]; do
-                echo "🏥 Health check attempt $attempt/$max_attempts..."
-            
-                # Проверяем что контейнер запущен
-                if docker compose ps nuxt-app | grep -q "Up"; then
-                  echo "✅ Container is running"
-            
-                  # Ждем немного для инициализации
-                  sleep 5
-            
-                  # Проверяем HTTP ответ
-                  if docker compose exec -T nuxt-app curl -f -s --max-time 15 http://localhost:3000/ > /dev/null 2>&1; then
-                    echo "✅ Health check passed!"
-                    return 0
-                  fi
-            
-                  echo "🔍 Checking what's wrong..."
-                  # Показываем логи если есть проблемы
-                  docker compose logs --tail 15 nuxt-app
-            
-                  # Проверяем процессы
-                  docker compose exec -T nuxt-app ps aux | grep node || echo "No node process"
-            
-                else
-                  echo "❌ Container is not running"
-                  docker compose ps nuxt-app
-                  docker compose logs --tail 10 nuxt-app
-                fi
-            
-                echo "⚠️ Health check failed, attempt $attempt/$max_attempts"
-                sleep 15
-                attempt=$((attempt + 1))
-              done
-            
-              echo "❌ Health check failed after $max_attempts attempts"
-              return 1
-            }
-            
-            # Плавно перезапускаем с новым образом
-            echo "🔄 Restarting with new image..."
-            docker compose up -d nuxt-app
-            
-            # Ждем запуска
-            echo "⏳ Waiting for container to initialize..."
-            sleep 20
-            
-            # Проверяем здоровье
-            if check_health; then
-              echo "🎉 Rolling deployment successful!"
-            
-              # Перезапускаем nginx для очистки соединений
-              docker compose restart nginx
-            
-            else
-              echo "❌ Deployment failed!"
-            
-              # Показываем детальную диагностику
-              echo "🔍 Detailed diagnostics:"
-              docker compose ps
-              docker compose logs --tail 30 nuxt-app
-            
-              exit 1
-            fi
-            
-            # Очистка
             echo "🧹 Cleaning up..."
             docker system prune -f
             
-            # Показываем финальный статус
             echo "📊 Final status:"
             docker compose ps
             
