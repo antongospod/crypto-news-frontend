@@ -1,4 +1,5 @@
 import { i18nConfig } from './i18n/config'
+import { resolve } from "node:dns";
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
@@ -81,7 +82,16 @@ export default defineNuxtConfig({
     fallback: 'dark',
     storageKey: 'cryptocenter-color-mode',
   },
-  i18n: i18nConfig,
+  i18n: {
+    ...i18nConfig,
+    baseUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://cryptocenter.finance',
+  },
+  content: {
+    database: {
+      type: 'sqlite',
+      filename: process.env.NODE_ENV === 'production' ? '/tmp/contents.sqlite' : './.data/content/contents.sqlite'
+    }
+  },
   css: [
     'normalize.css/normalize.css',
   ],
