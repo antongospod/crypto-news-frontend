@@ -1,12 +1,12 @@
 {
   "id": null,
-  "uid": "cryptocenter-monitoring-v2",
+  "uid": "cryptocenter-monitoring-fixed",
   "title": "🚀 CryptoCenter Infrastructure Dashboard",
   "tags": ["docker", "container", "cryptocenter", "infrastructure"],
   "timezone": "browser",
   "refresh": "10s",
   "schemaVersion": 30,
-  "version": 2,
+  "version": 3,
   "time": {
     "from": "now-1h",
     "to": "now"
@@ -29,7 +29,7 @@
           "refId": "B"
         },
         {
-          "expr": "count(container_last_seen{name=~\"nuxt-app|nginx|prometheus|grafana\"})",
+          "expr": "count(rate(container_cpu_usage_seconds_total{name=~\"nuxt-app|nginx|prometheus|grafana|cadvisor\"}[5m]))",
           "legendFormat": "🐳 Active Services",
           "refId": "C"
         },
@@ -64,7 +64,7 @@
     },
     {
       "id": 3,
-      "title": "⚡ Nuxt.js App - CPU Usage",
+      "title": "⚡ Nuxt.js App - Resources",
       "type": "stat",
       "gridPos": {"h": 6, "w": 8, "x": 0, "y": 5},
       "targets": [
@@ -72,15 +72,18 @@
           "expr": "rate(container_cpu_usage_seconds_total{name=\"nuxt-app\"}[5m]) * 100",
           "legendFormat": "CPU %",
           "refId": "A"
+        },
+        {
+          "expr": "container_memory_usage_bytes{name=\"nuxt-app\"} / 1024 / 1024",
+          "legendFormat": "Memory MB",
+          "refId": "B"
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "percent",
-          "max": 100,
-          "min": 0,
+          "unit": "short",
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
           "thresholds": {
             "steps": [
@@ -94,46 +97,18 @@
     },
     {
       "id": 4,
-      "title": "💾 Nuxt.js App - Memory Usage",
+      "title": "🌐 Nginx - Web Server",
       "type": "stat",
       "gridPos": {"h": 6, "w": 8, "x": 8, "y": 5},
       "targets": [
         {
-          "expr": "container_memory_usage_bytes{name=\"nuxt-app\"} / 1024 / 1024",
-          "legendFormat": "Memory MB",
-          "refId": "A"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "decbytes",
-          "color": {
-            "mode": "thresholds"
-          },
-          "thresholds": {
-            "steps": [
-              {"color": "green", "value": 0},
-              {"color": "yellow", "value": 200},
-              {"color": "red", "value": 500}
-            ]
-          }
-        }
-      }
-    },
-    {
-      "id": 5,
-      "title": "🌐 Nginx - HTTP Requests",
-      "type": "stat",
-      "gridPos": {"h": 6, "w": 8, "x": 16, "y": 5},
-      "targets": [
-        {
           "expr": "rate(container_cpu_usage_seconds_total{name=\"nginx\"}[5m]) * 100",
-          "legendFormat": "Nginx CPU %",
+          "legendFormat": "CPU %",
           "refId": "A"
         },
         {
           "expr": "container_memory_usage_bytes{name=\"nginx\"} / 1024 / 1024",
-          "legendFormat": "Nginx Memory MB",
+          "legendFormat": "Memory MB",
           "refId": "B"
         }
       ],
@@ -142,6 +117,34 @@
           "unit": "short",
           "color": {
             "mode": "palette-classic"
+          }
+        }
+      }
+    },
+    {
+      "id": 5,
+      "title": "📊 Container Uptime",
+      "type": "stat",
+      "gridPos": {"h": 6, "w": 8, "x": 16, "y": 5},
+      "targets": [
+        {
+          "expr": "(time() - container_start_time_seconds{name=~\"nuxt-app|nginx|prometheus|grafana\"}) / 3600",
+          "legendFormat": "{{name}} Hours",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "h",
+          "color": {
+            "mode": "palette-classic"
+          },
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": 0},
+              {"color": "yellow", "value": 1},
+              {"color": "green", "value": 24}
+            ]
           }
         }
       }
@@ -331,7 +334,7 @@
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "percent",
+          "unit": "short",
           "color": {
             "mode": "thresholds"
           },
@@ -373,29 +376,61 @@
     },
     {
       "id": 16,
-      "title": "🛠️ Service Status & Uptime",
+      "title": "🛠️ Container Details",
       "type": "table",
-      "gridPos": {"h": 6, "w": 24, "x": 0, "y": 34},
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 34},
       "targets": [
         {
-          "expr": "container_start_time_seconds{name=~\"nuxt-app|nginx|prometheus|grafana|cadvisor\"}",
+          "expr": "rate(container_cpu_usage_seconds_total{name=~\"nuxt-app|nginx|prometheus|grafana|cadvisor\"}[5m]) * 100",
           "legendFormat": "{{name}}",
           "refId": "A",
+          "format": "table"
+        },
+        {
+          "expr": "container_memory_usage_bytes{name=~\"nuxt-app|nginx|prometheus|grafana|cadvisor\"} / 1024 / 1024",
+          "legendFormat": "{{name}}",
+          "refId": "B",
+          "format": "table"
+        },
+        {
+          "expr": "(time() - container_start_time_seconds{name=~\"nuxt-app|nginx|prometheus|grafana|cadvisor\"}) / 3600",
+          "legendFormat": "{{name}}",
+          "refId": "C",
           "format": "table"
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "unit": "dateTimeAsIso"
-        }
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {"id": "byName", "options": "CPU %"},
+            "properties": [{"id": "unit", "value": "percent"}]
+          },
+          {
+            "matcher": {"id": "byName", "options": "Memory MB"},
+            "properties": [{"id": "unit", "value": "decbytes"}]
+          },
+          {
+            "matcher": {"id": "byName", "options": "Uptime Hours"},
+            "properties": [{"id": "unit", "value": "h"}]
+          }
+        ]
       },
       "transformations": [
+        {
+          "id": "merge",
+          "options": {}
+        },
         {
           "id": "organize",
           "options": {
             "renameByName": {
               "name": "🐳 Service",
-              "Value": "🕐 Started At"
+              "Value #A": "⚡ CPU %",
+              "Value #B": "💾 Memory MB",
+              "Value #C": "🕐 Uptime Hours"
             }
           }
         }
@@ -407,22 +442,12 @@
       {
         "name": "service",
         "type": "query",
-        "query": "label_values(container_last_seen, name)",
+        "query": "label_values(container_cpu_usage_seconds_total, name)",
         "refresh": 1,
         "includeAll": true,
         "allValue": ".*",
         "multi": true,
         "label": "🐳 Container Service"
-      }
-    ]
-  },
-  "annotations": {
-    "list": [
-      {
-        "name": "🔄 Service Restarts",
-        "enable": true,
-        "iconColor": "#FF6B6B",
-        "query": "changes(container_start_time_seconds[1h]) > 0"
       }
     ]
   }
