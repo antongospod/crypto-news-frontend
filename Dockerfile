@@ -1,5 +1,8 @@
 FROM node:22-alpine AS base
 
+# Install build dependencies for native modules
+RUN apk add --no-cache python3 make g++ sqlite-dev
+
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
@@ -21,12 +24,13 @@ COPY . .
 
 # Rebuild native modules for the current platform
 RUN pnpm rebuild better-sqlite3
+RUN pnpm rebuild
 
 # Build the application
 RUN pnpm run build
 
 # Production image
-FROM base AS runner
+FROM node:22-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV production

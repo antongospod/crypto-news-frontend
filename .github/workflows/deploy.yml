@@ -26,11 +26,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run tests
-        run: pnpm run test || echo "No tests configured"
+      - name: Run linting (optional)
+        run: pnpm run lint || echo "No linting configured"
 
-      - name: Build application
-        run: pnpm run build
+      - name: Run tests (optional)
+        run: pnpm run test || echo "No tests configured"
 
       - name: Deploy to VPS
         if: github.ref == 'refs/heads/master'
