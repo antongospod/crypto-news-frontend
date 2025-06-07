@@ -1,26 +1,69 @@
 {
   "id": null,
-  "uid": null,
-  "title": "CryptoCenter Docker Monitoring",
-  "tags": ["docker", "container", "cryptocenter"],
+  "uid": "cryptocenter-monitoring",
+  "title": "CryptoCenter Infrastructure Monitoring",
+  "tags": ["docker", "container", "cryptocenter", "infrastructure"],
   "timezone": "browser",
-  "refresh": "5s",
+  "refresh": "10s",
   "schemaVersion": 30,
   "version": 1,
   "time": {
-    "from": "now-1h",
+    "from": "now-6h",
     "to": "now"
   },
   "panels": [
     {
       "id": 1,
-      "title": "Container CPU Usage",
+      "title": "System Overview",
       "type": "stat",
-      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "gridPos": {"h": 6, "w": 24, "x": 0, "y": 0},
       "targets": [
         {
-          "expr": "rate(container_cpu_usage_seconds_total{name=\"nuxt-app\"}[5m]) * 100",
-          "legendFormat": "CPU %",
+          "expr": "up{job=\"node-exporter\"}",
+          "legendFormat": "Node Exporter",
+          "refId": "A"
+        },
+        {
+          "expr": "up{job=\"cadvisor\"}",
+          "legendFormat": "cAdvisor",
+          "refId": "B"
+        },
+        {
+          "expr": "count(container_last_seen{name=~\"nuxt-app|nginx|prometheus|grafana\"})",
+          "legendFormat": "Active Containers",
+          "refId": "C"
+        },
+        {
+          "expr": "(node_filesystem_avail_bytes{mountpoint=\"/\"} / node_filesystem_size_bytes{mountpoint=\"/\"}) * 100",
+          "legendFormat": "Disk Available %",
+          "refId": "D"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "steps": [
+              {"color": "red", "value": 0},
+              {"color": "yellow", "value": 0.8},
+              {"color": "green", "value": 1}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 2,
+      "title": "Container CPU Usage (%)",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 6},
+      "targets": [
+        {
+          "expr": "rate(container_cpu_usage_seconds_total{name=~\"nuxt-app|nginx|prometheus|grafana\"}[5m]) * 100",
+          "legendFormat": "{{name}}",
           "refId": "A"
         }
       ],
@@ -28,45 +71,262 @@
         "defaults": {
           "unit": "percent",
           "max": 100,
-          "min": 0
-        }
-      }
-    },
-    {
-      "id": 2,
-      "title": "Container Memory Usage",
-      "type": "stat",
-      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
-      "targets": [
-        {
-          "expr": "container_memory_usage_bytes{name=\"nuxt-app\"} / 1024 / 1024",
-          "legendFormat": "Memory MB",
-          "refId": "A"
-        }
-      ],
-      "fieldConfig": {
-        "defaults": {
-          "unit": "decbytes"
+          "min": 0,
+          "color": {
+            "mode": "palette-classic"
+          }
         }
       }
     },
     {
       "id": 3,
-      "title": "Network Traffic",
+      "title": "Container Memory Usage (MB)",
       "type": "timeseries",
-      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 8},
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 6},
       "targets": [
         {
-          "expr": "rate(container_network_receive_bytes_total{name=\"nuxt-app\"}[5m])",
+          "expr": "container_memory_usage_bytes{name=~\"nuxt-app|nginx|prometheus|grafana\"} / 1024 / 1024",
+          "legendFormat": "{{name}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decbytes",
+          "color": {
+            "mode": "palette-classic"
+          }
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "Network Traffic (bytes/sec)",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 14},
+      "targets": [
+        {
+          "expr": "rate(container_network_receive_bytes_total{name=~\"nuxt-app|nginx\"}[5m])",
           "legendFormat": "RX {{name}}",
           "refId": "A"
         },
         {
-          "expr": "rate(container_network_transmit_bytes_total{name=\"nuxt-app\"}[5m])",
+          "expr": "rate(container_network_transmit_bytes_total{name=~\"nuxt-app|nginx\"}[5m])",
           "legendFormat": "TX {{name}}",
           "refId": "B"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "binBps",
+          "color": {
+            "mode": "palette-classic"
+          }
+        }
+      }
+    },
+    {
+      "id": 5,
+      "title": "System Load Average",
+      "type": "timeseries",
+      "gridPos": {"h": 6, "w": 8, "x": 0, "y": 22},
+      "targets": [
+        {
+          "expr": "node_load1",
+          "legendFormat": "1m",
+          "refId": "A"
+        },
+        {
+          "expr": "node_load5",
+          "legendFormat": "5m",
+          "refId": "B"
+        },
+        {
+          "expr": "node_load15",
+          "legendFormat": "15m",
+          "refId": "C"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "color": {
+            "mode": "palette-classic"
+          }
+        }
+      }
+    },
+    {
+      "id": 6,
+      "title": "System Memory Usage",
+      "type": "stat",
+      "gridPos": {"h": 6, "w": 8, "x": 8, "y": 22},
+      "targets": [
+        {
+          "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100",
+          "legendFormat": "Used %",
+          "refId": "A"
+        },
+        {
+          "expr": "node_memory_MemAvailable_bytes / 1024 / 1024 / 1024",
+          "legendFormat": "Available GB",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "steps": [
+              {"color": "green", "value": 0},
+              {"color": "yellow", "value": 70},
+              {"color": "red", "value": 90}
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 7,
+      "title": "Disk I/O",
+      "type": "timeseries",
+      "gridPos": {"h": 6, "w": 8, "x": 16, "y": 22},
+      "targets": [
+        {
+          "expr": "rate(node_disk_read_bytes_total[5m])",
+          "legendFormat": "Read {{device}}",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(node_disk_written_bytes_total[5m])",
+          "legendFormat": "Write {{device}}",
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "binBps",
+          "color": {
+            "mode": "palette-classic"
+          }
+        }
+      }
+    },
+    {
+      "id": 8,
+      "title": "Container Restart Count",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 12, "x": 0, "y": 28},
+      "targets": [
+        {
+          "expr": "container_start_time_seconds{name=~\"nuxt-app|nginx|prometheus|grafana\"}",
+          "legendFormat": "{{name}} start time",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "dateTimeAsIso",
+          "color": {
+            "mode": "palette-classic"
+          }
+        }
+      }
+    },
+    {
+      "id": 9,
+      "title": "HTTP Response Codes (Nginx)",
+      "type": "timeseries",
+      "gridPos": {"h": 4, "w": 12, "x": 12, "y": 28},
+      "targets": [
+        {
+          "expr": "rate(nginx_http_requests_total[5m])",
+          "legendFormat": "{{status}} - {{method}}",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "color": {
+            "mode": "palette-classic"
+          }
+        }
+      }
+    },
+    {
+      "id": 10,
+      "title": "Top Processes by CPU",
+      "type": "table",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 32},
+      "targets": [
+        {
+          "expr": "topk(10, rate(container_cpu_usage_seconds_total[5m]) * 100)",
+          "legendFormat": "{{name}}",
+          "refId": "A",
+          "format": "table"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "title": "Container File System Usage",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 32},
+      "targets": [
+        {
+          "expr": "(container_fs_usage_bytes{name=~\"nuxt-app|nginx|prometheus|grafana\"} / container_fs_limit_bytes{name=~\"nuxt-app|nginx|prometheus|grafana\"}) * 100",
+          "legendFormat": "{{name}} FS Usage %",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "max": 100,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "steps": [
+              {"color": "green", "value": 0},
+              {"color": "yellow", "value": 70},
+              {"color": "red", "value": 90}
+            ]
+          }
+        }
+      }
     }
-  ]
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "container",
+        "type": "query",
+        "query": "label_values(container_last_seen, name)",
+        "refresh": 1,
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true
+      }
+    ]
+  },
+  "annotations": {
+    "list": [
+      {
+        "name": "Container Restarts",
+        "enable": true,
+        "iconColor": "red",
+        "query": "changes(container_start_time_seconds[1h]) > 0"
+      }
+    ]
+  }
 }
