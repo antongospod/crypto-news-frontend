@@ -33,5 +33,67 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /opt/cryptocenter
-            chmod +x scripts/deploy.sh
-            ./scripts/deploy.sh
+            echo "🔄 Starting Rolling Deployment..."
+            
+            PREV_COMMIT=$(git rev-parse HEAD)
+            git pull origin master
+            CURRENT_COMMIT=$(git rev-parse HEAD)
+            
+            echo "📝 Checking what changed..."
+            CHANGED_FILES=$(git diff --name-only $PREV_COMMIT $CURRENT_COMMIT)
+            echo "Changed files: $CHANGED_FILES"
+            
+            APP_CHANGED=false
+            MONITORING_CHANGED=false
+            NGINX_CHANGED=false
+            
+            if echo "$CHANGED_FILES" | grep -E "(pages/|components/|server/|nuxt.config|package\.json|Dockerfile)" > /dev/null; then
+              APP_CHANGED=true
+              echo "🔍 Application code changed"
+            fi
+            
+            if echo "$CHANGED_FILES" | grep -E "monitoring/" > /dev/null; then
+              MONITORING_CHANGED=true
+              echo "📊 Monitoring configuration changed"
+            fi
+            
+            if echo "$CHANGED_FILES" | grep -E "nginx\.conf" > /dev/null; then
+              NGINX_CHANGED=true
+              echo "🌐 Nginx configuration changed"
+            fi
+            
+            if [ "$APP_CHANGED" = true ]; then
+              echo "🔨 Building new application image..."
+              docker compose build nuxt-app
+              echo "🔄 Restarting application..."
+              docker compose up -d nuxt-app
+              sleep 10
+            fi
+            
+            if [ "$NGINX_CHANGED" = true ]; then
+              echo "🌐 Restarting Nginx..."
+              docker compose restart nginx
+            fi
+            
+            if [ "$MONITORING_CHANGED" = true ]; then
+              echo "📊 Restarting monitoring services..."
+              if echo "$CHANGED_FILES" | grep -E "monitoring/dashboards/" > /dev/null; then
+                echo "📈 Dashboard files changed - restarting Grafana..."
+                docker compose restart grafana
+                sleep 15
+              fi
+              if echo "$CHANGED_FILES" | grep -E "monitoring/prometheus\.yml" > /dev/null; then
+                echo "📊 Prometheus config changed - restarting Prometheus..."
+                docker compose restart prometheus
+              fi
+            fi
+            
+            if [ "$APP_CHANGED" = false ] && [ "$MONITORING_CHANGED" = false ] && [ "$NGINX_CHANGED" = false ]; then
+              echo "🔄 No specific changes detected, performing full restart..."
+              docker compose up -d
+            fi
+            
+            docker system prune -f
+            echo "📊 Final status:"
+            docker compose ps
+            echo "🎉 Deployment completed!"
