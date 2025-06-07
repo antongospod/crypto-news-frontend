@@ -35,8 +35,19 @@ jobs:
             cd /opt/cryptocenter
             echo "🔄 Starting Rolling Deployment..."
             
+            # Сохраняем предыдущий коммит
             PREV_COMMIT=$(git rev-parse HEAD)
+            
+            # Принудительно сбрасываем локальные изменения
+            echo "🔄 Resetting local changes..."
+            git stash push -m "Auto-stash before deployment $(date)"
+            git reset --hard HEAD
+            git clean -fd
+            
+            # Обновляемся с origin
+            echo "⬇️ Pulling latest changes..."
             git pull origin master
+            
             CURRENT_COMMIT=$(git rev-parse HEAD)
             
             echo "📝 Checking what changed..."
@@ -62,7 +73,12 @@ jobs:
               echo "🌐 Nginx configuration changed"
             fi
             
-            if [ "$APP_CHANGED" = true ]; then
+            # Всегда перезапускаем сервисы если есть изменения в docker-compose.yml
+            if echo "$CHANGED_FILES" | grep -E "docker-compose\.yml" > /dev/null; then
+              echo "🔧 Docker Compose config changed - full restart needed"
+              docker compose down
+              docker compose up -d
+            elif [ "$APP_CHANGED" = true ]; then
               echo "🔨 Building new application image..."
               docker compose build nuxt-app
               echo "🔄 Restarting application..."
@@ -89,11 +105,14 @@ jobs:
             fi
             
             if [ "$APP_CHANGED" = false ] && [ "$MONITORING_CHANGED" = false ] && [ "$NGINX_CHANGED" = false ]; then
-              echo "🔄 No specific changes detected, performing full restart..."
+              echo "🔄 No specific changes detected, performing safety restart..."
               docker compose up -d
             fi
             
+            echo "🧹 Cleaning up..."
             docker system prune -f
+            
             echo "📊 Final status:"
             docker compose ps
-            echo "🎉 Deployment completed!"
+            
+            echo "✅ Deployment completed successfully!"
