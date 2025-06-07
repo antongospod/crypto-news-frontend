@@ -1,3 +1,4 @@
+# .github/workflows/deploy.yml
 name: Deploy to VPS
 
 on:
@@ -9,7 +10,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -42,7 +43,9 @@ jobs:
           script: |
             cd /opt/cryptocenter
             git pull origin master
-            docker-compose down
-            docker-compose build --no-cache
-            docker-compose up -d
+            docker compose down
+            docker compose build --no-cache
+            docker compose up -d
             docker system prune -f
+            echo "🎉 Deployment completed!"
+            docker compose ps
