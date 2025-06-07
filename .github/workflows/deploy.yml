@@ -38,10 +38,6 @@ jobs:
             # Сохраняем предыдущий коммит
             PREV_COMMIT=$(git rev-parse HEAD)
             
-            # Исправляем права доступа к файлам мониторинга
-            echo "🔧 Fixing file permissions..."
-            sudo chown -R cryptocenter:cryptocenter ./monitoring/
-            
             # Принудительно сбрасываем локальные изменения
             echo "🔄 Resetting local changes..."
             git stash push -m "Auto-stash before deployment $(date)"
