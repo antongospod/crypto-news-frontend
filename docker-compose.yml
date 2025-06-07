@@ -66,7 +66,7 @@ services:
       - app-network
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:10.4.0
     container_name: grafana
     restart: unless-stopped
     ports:
@@ -75,11 +75,9 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin123
       - GF_SECURITY_ADMIN_USER=admin
       - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
     volumes:
       - grafana_data:/var/lib/grafana
-      - ./monitoring/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
-      - ./monitoring/grafana-dashboards.yml:/etc/grafana/provisioning/dashboards/main.yml:ro
-      - ./monitoring:/var/lib/grafana/dashboards:ro
     networks:
       - app-network
 
