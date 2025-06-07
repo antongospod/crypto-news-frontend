@@ -1,66 +1,72 @@
 {
-  "dashboard": {
-    "id": null,
-    "title": "CryptoCenter Monitoring",
-    "tags": ["docker", "container", "cryptocenter"],
-    "timezone": "browser",
-    "panels": [
-      {
-        "id": 1,
-        "title": "Container CPU Usage",
-        "type": "stat",
-        "targets": [
-          {
-            "expr": "rate(container_cpu_usage_seconds_total{name=\"nuxt-app\"}[5m]) * 100",
-            "legendFormat": "CPU %"
-          }
-        ],
-        "fieldConfig": {
-          "defaults": {
-            "unit": "percent",
-            "max": 100
-          }
-        },
-        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
-      },
-      {
-        "id": 2,
-        "title": "Container Memory Usage",
-        "type": "stat",
-        "targets": [
-          {
-            "expr": "container_memory_usage_bytes{name=\"nuxt-app\"} / 1024 / 1024",
-            "legendFormat": "Memory MB"
-          }
-        ],
-        "fieldConfig": {
-          "defaults": {
-            "unit": "bytes"
-          }
-        },
-        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
-      },
-      {
-        "id": 3,
-        "title": "Network Traffic",
-        "type": "graph",
-        "targets": [
-          {
-            "expr": "rate(container_network_receive_bytes_total{name=\"nuxt-app\"}[5m])",
-            "legendFormat": "RX"
-          },
-          {
-            "expr": "rate(container_network_transmit_bytes_total{name=\"nuxt-app\"}[5m])",
-            "legendFormat": "TX"
-          }
-        ],
-        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 8}
+  "id": null,
+  "uid": null,
+  "title": "CryptoCenter Docker Monitoring",
+  "tags": ["docker", "container", "cryptocenter"],
+  "timezone": "browser",
+  "refresh": "5s",
+  "schemaVersion": 30,
+  "version": 1,
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "title": "Container CPU Usage",
+      "type": "stat",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "targets": [
+        {
+          "expr": "rate(container_cpu_usage_seconds_total{name=\"nuxt-app\"}[5m]) * 100",
+          "legendFormat": "CPU %",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "max": 100,
+          "min": 0
+        }
       }
-    ],
-    "time": {
-      "from": "now-1h",
-      "to": "now"
     },
-    "refresh": "5s"
-  }
+    {
+      "id": 2,
+      "title": "Container Memory Usage",
+      "type": "stat",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "targets": [
+        {
+          "expr": "container_memory_usage_bytes{name=\"nuxt-app\"} / 1024 / 1024",
+          "legendFormat": "Memory MB",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decbytes"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "title": "Network Traffic",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 24, "x": 0, "y": 8},
+      "targets": [
+        {
+          "expr": "rate(container_network_receive_bytes_total{name=\"nuxt-app\"}[5m])",
+          "legendFormat": "RX {{name}}",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(container_network_transmit_bytes_total{name=\"nuxt-app\"}[5m])",
+          "legendFormat": "TX {{name}}",
+          "refId": "B"
+        }
+      ]
+    }
+  ]
 }
