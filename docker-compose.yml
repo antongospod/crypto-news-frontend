@@ -11,6 +11,20 @@ services:
       - NUXT_PUBLIC_SITE_URL=https://cryptocenter.finance
     networks:
       - app-network
+    deploy:
+      resources:
+        limits:
+          memory: 4096m
+          cpus: '2.5'
+        reservations:
+          memory: 2048m
+          cpus: '1.5'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   nginx:
     image: nginx:alpine
@@ -23,12 +37,26 @@ services:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
     depends_on:
-      - nuxt-app
+      nuxt-app:
+        condition: service_healthy
     networks:
       - app-network
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+          cpus: '0.5'
+        reservations:
+          memory: 128m
+          cpus: '0.25'
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:latest
+    image: gcr.io/cadvisor/cadvisor:v0.49.1
     container_name: cadvisor
     restart: unless-stopped
     ports:
@@ -44,9 +72,24 @@ services:
       - /dev/kmsg
     networks:
       - app-network
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+          cpus: '0.5'
+        reservations:
+          memory: 128m
+          cpus: '0.25'
+    command:
+      - '--housekeeping_interval=30s'
+      - '--max_housekeeping_interval=35s'
+      - '--event_storage_event_limit=default=0'
+      - '--event_storage_age_limit=default=0'
+      - '--disable_metrics=accelerator,cpu_topology,disk,memory_numa,tcp,udp,percpu,sched,process,hugetlb,referenced_memory,resctrl,cpuset,advtcp,memory_numa'
+      - '--docker_only'
 
   node-exporter:
-    image: prom/node-exporter:latest
+    image: prom/node-exporter:v1.7.0
     container_name: node-exporter
     restart: unless-stopped
     ports:
@@ -56,15 +99,25 @@ services:
       - '--path.rootfs=/host/rootfs'
       - '--path.sysfs=/host/sys'
       - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+      - '--collector.netdev.device-exclude=^(veth.*|docker.*|br-.*)$$'
+      - '--collector.netstat.fields=^(.*_(InErrors|InErrs)|Ip_Forwarding|Ip(6|Ext)_(InOctets|OutOctets)|Icmp6?_(InMsgs|OutMsgs)|TcpExt_(Listen.*|Syncookies.*)|Tcp_(ActiveOpens|PassiveOpens|RetransSegs|CurrEstab)|Udp6?_(InDatagrams|OutDatagrams|NoPorts))$$'
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/host/rootfs:ro
     networks:
       - app-network
+    deploy:
+      resources:
+        limits:
+          memory: 64m
+          cpus: '0.25'
+        reservations:
+          memory: 32m
+          cpus: '0.1'
 
   prometheus:
-    image: prom/prometheus:latest
+    image: prom/prometheus:v2.48.0
     container_name: prometheus
     restart: unless-stopped
     ports:
@@ -78,8 +131,26 @@ services:
       - '--web.console.libraries=/etc/prometheus/console_libraries'
       - '--web.console.templates=/etc/prometheus/consoles'
       - '--web.enable-lifecycle'
+      - '--storage.tsdb.retention.time=7d'
+      - '--storage.tsdb.retention.size=1GB'
+      - '--web.enable-admin-api'
+      - '--query.max-concurrency=4'
+      - '--query.max-samples=10000000'
     networks:
       - app-network
+    deploy:
+      resources:
+        limits:
+          memory: 1536m
+          cpus: '0.75'
+        reservations:
+          memory: 768m
+          cpus: '0.5'
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 
   grafana:
     image: grafana/grafana:10.4.0
@@ -88,10 +159,16 @@ services:
     ports:
       - "3001:3000"
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=admin123
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD:-admin123}
       - GF_SECURITY_ADMIN_USER=admin
       - GF_USERS_ALLOW_SIGN_UP=false
       - GF_PROVISIONING_DASHBOARD_RESCAN_INTERVAL=10s
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+      - GF_RENDERING_SERVER_URL=
+      - GF_RENDERING_CALLBACK_URL=
+      - GF_LOG_FILTERS=rendering:debug
+      - GF_PANELS_DISABLE_SANITIZE_HTML=true
+      - GF_SECURITY_ALLOW_EMBEDDING=true
     volumes:
       - grafana_data:/var/lib/grafana
       - ./monitoring/grafana-datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml:ro
@@ -99,6 +176,22 @@ services:
       - ./monitoring/dashboards:/var/lib/grafana/dashboards:ro
     networks:
       - app-network
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+          cpus: '0.5'
+        reservations:
+          memory: 256m
+          cpus: '0.25'
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      prometheus:
+        condition: service_healthy
 
 networks:
   app-network:
@@ -106,7 +199,20 @@ networks:
     ipam:
       config:
         - subnet: 172.20.0.0/16
+      driver: default
+    driver_opts:
+      com.docker.network.bridge.name: br-cryptocenter
 
 volumes:
   prometheus_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/cryptocenter/data/prometheus
   grafana_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /opt/cryptocenter/data/grafana
