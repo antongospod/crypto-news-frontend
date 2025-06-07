@@ -100,6 +100,7 @@ export default defineNuxtConfig({
     future: {
       nativeSWR: true,
     },
+    preset: 'node-server'
   },
   devtools: {
     enabled: false,
