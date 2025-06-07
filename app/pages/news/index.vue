@@ -2,7 +2,7 @@
 const { locale, t } = useI18n()
 
 const page = ref(1)
-const limit = 4
+const limit = 16
 const hasMore = ref(true)
 const isPending = ref(false)
 const sentinel = ref<HTMLElement | null>(null)
@@ -12,7 +12,6 @@ useLangMeta('news.meta', '/images/home/cryptocenter-cover.webp')
 const { data: initialPosts } = await useAsyncData('news-posts', () => {
   const offset = (page.value - 1) * limit
   return queryCollection(locale.value)
-      .where('feature', '=', true)
       .order('date', 'DESC')
       .skip(offset)
       .limit(limit)
@@ -36,7 +35,6 @@ async function loadMorePosts() {
 
   const offset = (page.value - 1) * limit
   const newPosts = await queryCollection(locale.value)
-      .where('feature', '=', true)
       .order('date', 'DESC')
       .skip(offset)
       .limit(limit)
@@ -97,13 +95,13 @@ onMounted(() => {
           <!-- Обёртка для изображения с фиксированным соотношением сторон -->
           <div v-if="article.img" class="aspect-[16/10] overflow-hidden rounded-md b-1 b-light-700 b-solid dark:b-dark-700">
             <NuxtImg
-                crossorigin="anonymous"
-                :alt="article.alt"
-                :title="article.alt"
-                loading="lazy"
-                format="webp"
-                class="h-full w-full object-cover transition duration-400 ease-in-out group-hover:scale-102"
-                :src="article.img"
+              crossorigin="anonymous"
+              :alt="article.alt"
+              :title="article.alt"
+              loading="lazy"
+              format="webp"
+              class="h-full w-full object-cover transition duration-400 ease-in-out group-hover:scale-102"
+              :src="article.img"
             />
           </div>
 

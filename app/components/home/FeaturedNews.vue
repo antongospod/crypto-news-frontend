@@ -13,7 +13,7 @@ const { data: features } = await useAsyncData('featured-posts', () => {
 
 
 <template>
-  <div class="mx-auto bg-light-3 py10 dark:bg-dark-900">
+  <div class="mx-auto bg-light-3 py10 dark:bg-dark-900" v-if="features && features.length > 0">
     <div class="mx-auto mt10 max-w-lg flex items-center justify-between px6 md:max-w-5xl 2xl:px45 xl:px25">
       <div class="mb-10 flex flex-col justify-center space-y-2">
         <UiScrollAnimation
