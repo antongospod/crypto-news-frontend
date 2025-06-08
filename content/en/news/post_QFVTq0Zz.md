@@ -11,8 +11,6 @@ source: "DeFiBank"
 feature: false
 ---
 
-# Ethereum Layer 2 Networks Surge: Starknet Achieves New Milestones
-
 In a remarkable development within the decentralized finance (DeFi) ecosystem, the Ethereum Layer 2 network Starknet has achieved significant milestones, drawing the eyes of both investors and developers. This surge of activity reflects the growing momentum in the Layer 2 sector, fueled by the urgent need for scalable solutions on the Ethereum blockchain. Starknet’s progress is not only reshaping Layer 2 narratives but also influencing the broader DeFi landscape.
 
 ## Starknet’s Rise: Transaction Throughput and Ecosystem Growth

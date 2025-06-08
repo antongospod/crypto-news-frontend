@@ -11,8 +11,6 @@ source: "DeFiBank"
 feature: false
 ---
 
-## Polygon lancia zkEVM Mainnet Beta: una nuova era per le soluzioni Layer2 su Ethereum
-
 Polygon ha annunciato il lancio della versione beta di zkEVM mainnet, segnando un momento fondamentale nell'evoluzione delle soluzioni di scalabilità Layer2 per Ethereum. Con le reti blockchain che affrontano crescenti sfide in termini di scalabilità, zkEVM di Polygon mira a offrire transazioni più rapide e commissioni ridotte, posizionandosi come potenziale punto di svolta per l’ecosistema.
 
 Polygon, tra i leader nel panorama Ethereum Layer2, ha presentato ufficialmente la beta della sua rete zkEVM, promettendo un incremento significativo nella velocità delle transazioni e una riduzione dei costi per gli utenti. Questo lancio arriva in un momento cruciale per la DeFi, dove scalabilità ed efficienza sono diventate elementi chiave. La tecnologia zkEVM sfrutta le zero-knowledge proofs per processare molteplici transazioni off-chain, prima di confermarle sulla mainnet di Ethereum, riducendo così la congestione della rete.

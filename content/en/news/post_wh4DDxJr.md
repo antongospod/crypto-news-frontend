@@ -11,8 +11,6 @@ source: "DeFiBank"
 feature: false
 ---
 
-# Arbitrum One's Surge: A Leap Forward for Layer 2 Solutions
-
 Arbitrum One, a leading Layer 2 scaling solution for Ethereum, has witnessed a remarkable surge in its Total Value Locked (TVL) over the past week. This development is seen as a pivotal moment within the rapidly advancing Layer 2 ecosystem, raising questions about the drivers behind this growth and the implications for the wider DeFi industry.
 
 ## $1 Billion Milestone: What’s Fueling Arbitrum’s Momentum?

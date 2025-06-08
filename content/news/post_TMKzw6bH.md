@@ -11,8 +11,6 @@ source: "DeFiBank"
 feature: false
 ---
 
-# La finanza decentralizzata incontra gli asset tradizionali: una nuova era per gli RWA
-
 In una mossa rivoluzionaria per la finanza decentralizzata (DeFi), il protocollo di punta MakerDAO ha annunciato l'integrazione strategica di asset del mondo reale (RWA) nel proprio ecosistema. Questa iniziativa, presentata il 18 ottobre, mira a migliorare la stabilità e la liquidità del mercato DeFi, creando un ponte tra la finanza tradizionale e la tecnologia blockchain.
 
 Questa evoluzione solleva domande fondamentali sul futuro della sinergia tra asset tradizionali e DeFi. Indica inoltre un cambio di paradigma verso una maggiore diversificazione degli asset, cambiando il modo in cui gli investitori percepiscono rischio e rendimento nel mondo crypto.

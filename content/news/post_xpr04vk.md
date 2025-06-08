@@ -11,8 +11,6 @@ source: "DeFiBank"
 feature: false
 ---
 
-# Adozione DeFi in Fuga: le Soluzioni Layer 2 Rafforzano il TVL oltre Ogni Aspettativa
-
 Negli ultimi mesi, il panorama DeFi è stato testimone di uno slancio senza precedenti nell’adozione e nel Total Value Locked (TVL), trainato in gran parte dai recenti progressi delle soluzioni Layer 2. Mentre l’ecosistema si evolve rompendo nuove barriere, i dati confermano che i Layer 2 sono ormai protagonisti assoluti, spingendo il TVL su livelli storici. Analizziamo chi guida questa crescita, le implicazioni e ciò che ci riserva il futuro della finanza decentralizzata.
 
 Secondo i dati più aggiornati di DeFiLlama, le soluzioni Layer 2 hanno registrato un’impennata notevole del TVL, superando le previsioni degli analisti. Protocolli come Arbitrum e Optimism recitano un ruolo centrale in questa crescita: Arbitrum, in particolare, ha aggiunto oltre 3 miliardi di dollari di TVL in un solo mese, con Optimism a ruota — attratte da transazioni rapide e commissioni drasticamente ridotte. Questo trend sottolinea come i Layer 2 stiano risolvendo i problemi di scalabilità di Ethereum, rendendo la DeFi più accessibile che mai.

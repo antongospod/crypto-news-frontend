@@ -11,8 +11,6 @@ source: "DeFiBank"
 feature: false
 ---
 
-# Surge in DeFi Adoption as Layer 2 Solutions Boost TVL Beyond Expectations
-
 Recent developments in the DeFi space highlight a significant surge in adoption and total value locked (TVL), majorly driven by advancements in Layer 2 solutions. As the DeFi ecosystem continues to break barriers, recent metrics indicate that Layer 2 protocols are now at the forefront, pushing TVL to new heights.
 
 This article delves into who the key players are, the implications of this growth, and what it means for the future of decentralized finance.
