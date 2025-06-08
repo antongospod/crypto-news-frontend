@@ -34,6 +34,11 @@ useHead({
       rel: 'manifest',
       href: '/site.webmanifest',
     },
+    {
+      rel: 'preconnect',
+      href: 'https://i.ibb.co',
+      crossorigin: '',
+    },
   ],
   meta: [
     { name: 'og:logo', content: '/apple-touch-icon.png' },

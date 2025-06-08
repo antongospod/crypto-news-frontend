@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     '@nuxt/content',
     '@nuxtjs/color-mode',
     '@nuxtjs/i18n',
+    '@nuxtjs/sitemap',
     '@unocss/nuxt',
   ],
   runtimeConfig: {
@@ -77,9 +78,23 @@ export default defineNuxtConfig({
   },
   colorMode: {
     classSuffix: '',
-    preference: 'dark',
+    preference: 'system',
     fallback: 'dark',
     storageKey: 'cryptocenter-color-mode',
+  },
+  sitemap: {
+    autoI18n: true,
+    strictNuxtContentPaths: true,
+    autoLastmod: true,
+    xslColumns: [
+      { label: 'URL', width: '50%' },
+      { label: 'Last Modified', select: 'sitemap:lastmod', width: '50%' },
+    ],
+    xslTips: false,
+    credits: false,
+  },
+  routeRules: {
+    '/news/**': { isr: true },
   },
   i18n: {
     ...i18nConfig,
