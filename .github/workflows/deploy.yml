@@ -2,7 +2,7 @@ name: Blue-Green Deploy to VPS
 
 on:
   push:
-    branches: [master]
+    branches: [ master ]
 
 jobs:
   deploy:
@@ -19,15 +19,15 @@ jobs:
           script: |
             cd /opt/cryptocenter
             echo "🔄 Starting Blue-Green deployment..."
-
+            
             # Обновляем код
             git stash push -m "Auto-stash $(date)" || true
             git reset --hard HEAD
             git pull origin master
-
+            
             # Определяем текущий активный порт из nginx конфига
             CURRENT_PORT=$(grep -o "172.20.0.1:[0-9]*" nginx.conf | cut -d: -f2)
-
+            
             if [ "$CURRENT_PORT" = "3000" ]; then
               NEW_PORT=3002
               COLOR="🟢 Green"
@@ -37,15 +37,31 @@ jobs:
               COLOR="🔵 Blue"
               echo "🟢 Current: Green (3002) → Deploying: $COLOR ($NEW_PORT)"
             fi
-
+            
             # Собираем новый образ
             echo "🔨 Building new version..."
             docker compose build nuxt-app
-
-            # Останавливаем контейнер на новом порту если есть
+            
+            # Останавливаем контейнер на новом порту если есть (только staging)
+            echo "🧹 Cleaning up staging containers..."
             docker stop nuxt-app-staging 2>/dev/null || true
             docker rm nuxt-app-staging 2>/dev/null || true
-
+            
+            # Освобождаем только NEW_PORT (не трогаем CURRENT_PORT!)
+            if ! netstat -tuln | grep ":$CURRENT_PORT " > /dev/null; then
+              echo "⚠️ Current port $CURRENT_PORT is not active - something is wrong!"
+            fi
+            
+            # Убиваем процессы только на NEW_PORT
+            fuser -k $NEW_PORT/tcp 2>/dev/null || true
+            
+            # Проверяем что NEW_PORT свободен
+            if netstat -tuln | grep ":$NEW_PORT " > /dev/null; then
+              echo "⚠️ Port $NEW_PORT is still busy after cleanup, forcing..."
+              fuser -k $NEW_PORT/tcp 2>/dev/null || true
+              sleep 3
+            fi
+            
             # Запускаем новый контейнер на staging порту
             echo "🚀 Starting new version on port $NEW_PORT..."
             docker run -d \
@@ -56,11 +72,11 @@ jobs:
               -e NUXT_PUBLIC_SITE_NAME=CryptoCenter \
               -e NUXT_PUBLIC_SITE_URL=https://cryptocenter.finance \
               cryptocenter-nuxt-app
-
+            
             # Ждем запуска
             echo "⏳ Waiting for new version to start..."
             sleep 20
-
+            
             # Health check новой версии
             echo "🔍 Health checking new version..."
             for i in {1..10}; do
@@ -72,7 +88,7 @@ jobs:
               echo "⏳ Attempt $i/10 - waiting..."
               sleep 3
             done
-
+            
             if [ "$HEALTH_OK" != "true" ]; then
               echo "❌ New version failed health check!"
               docker logs nuxt-app-staging --tail 50
@@ -80,37 +96,31 @@ jobs:
               docker rm nuxt-app-staging
               exit 1
             fi
-
+            
             # Переключаем nginx на новый порт
             echo "🔄 Switching nginx to new version..."
             cp nginx.conf nginx.conf.backup
             sed -i "s/172.20.0.1:$CURRENT_PORT/172.20.0.1:$NEW_PORT/g" nginx.conf
-
+            
             # Перезагружаем nginx конфигурацию
             docker exec nginx nginx -s reload
-
+            
             # Проверяем что nginx переключился успешно
             sleep 5
             if curl -f -s https://cryptocenter.finance > /dev/null; then
               echo "✅ Nginx successfully switched to new version"
-
-              # Останавливаем старую версию
-              echo "🛑 Stopping old version..."
-              if [ "$NEW_PORT" = "3000" ]; then
-                # Убиваем процесс на порту 3002
-                fuser -k 3002/tcp 2>/dev/null || true
-              else
-                # Убиваем процесс на порту 3000
-                fuser -k 3000/tcp 2>/dev/null || true
-              fi
-
-              # Переименовываем staging в основной
+            
+              # ТОЛЬКО ТЕПЕРЬ останавливаем старую версию (после успешного переключения)
+              echo "🛑 Stopping old version on port $CURRENT_PORT..."
+              fuser -k $CURRENT_PORT/tcp 2>/dev/null || true
+            
+              # Переименовываем staging в active
               docker stop nuxt-app-staging
-              docker rename nuxt-app-staging nuxt-app-$NEW_PORT
-              docker start nuxt-app-$NEW_PORT
-
+              docker rename nuxt-app-staging nuxt-app-active
+              docker start nuxt-app-active
+            
               echo "✅ $COLOR deployment completed successfully!"
-
+            
             else
               echo "❌ Nginx switch failed, rolling back..."
               cp nginx.conf.backup nginx.conf
@@ -119,18 +129,18 @@ jobs:
               docker rm nuxt-app-staging
               exit 1
             fi
-
+            
             # Обновляем остальные сервисы если нужно
             echo "🔄 Updating other services..."
             docker compose up -d --no-deps nginx prometheus grafana cadvisor node-exporter
-
+            
             # Проверяем финальный статус
             echo "📊 Final status:"
             docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
-
+            
             # Очистка
             echo "🧹 Cleaning up..."
             docker system prune -f
-
+            
             echo "✅ Blue-Green deployment completed!"
             echo "🌐 Site available at: https://cryptocenter.finance"
