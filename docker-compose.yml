@@ -26,6 +26,8 @@ services:
       - nuxt-app
     networks:
       - app-network
+    command: >
+      sh -c "nginx -g 'daemon off;'"
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest

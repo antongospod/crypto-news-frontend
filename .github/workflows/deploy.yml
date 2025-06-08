@@ -1,4 +1,4 @@
-name: Rolling Deploy to VPS
+name: Blue-Green Deploy to VPS
 
 on:
   push:
@@ -9,22 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
       - name: Deploy to VPS
-        if: github.ref == 'refs/heads/master'
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: ${{ secrets.HOST }}
@@ -33,86 +18,119 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /opt/cryptocenter
-            echo "🔄 Starting Rolling Deployment..."
+            echo "🔄 Starting Blue-Green deployment..."
             
-            # Сохраняем предыдущий коммит
-            PREV_COMMIT=$(git rev-parse HEAD)
-            
-            # Принудительно сбрасываем локальные изменения
-            echo "🔄 Resetting local changes..."
-            git stash push -m "Auto-stash before deployment $(date)"
+            # Обновляем код
+            git stash push -m "Auto-stash $(date)" || true
             git reset --hard HEAD
-            git clean -fd
-            
-            # Обновляемся с origin
-            echo "⬇️ Pulling latest changes..."
             git pull origin master
             
-            CURRENT_COMMIT=$(git rev-parse HEAD)
+            # Определяем текущий активный порт из nginx конфига
+            CURRENT_PORT=$(grep -o "172.20.0.1:[0-9]*" nginx.conf | cut -d: -f2)
             
-            echo "📝 Checking what changed..."
-            CHANGED_FILES=$(git diff --name-only $PREV_COMMIT $CURRENT_COMMIT)
-            echo "Changed files: $CHANGED_FILES"
-            
-            APP_CHANGED=false
-            MONITORING_CHANGED=false
-            NGINX_CHANGED=false
-            
-            if echo "$CHANGED_FILES" | grep -E "(pages/|components/|server/|nuxt.config|package\.json|Dockerfile)" > /dev/null; then
-              APP_CHANGED=true
-              echo "🔍 Application code changed"
+            if [ "$CURRENT_PORT" = "3000" ]; then
+              NEW_PORT=3002
+              COLOR="🟢 Green"
+              echo "🔵 Current: Blue (3000) → Deploying: $COLOR ($NEW_PORT)"
+            else
+              NEW_PORT=3000
+              COLOR="🔵 Blue"
+              echo "🟢 Current: Green (3002) → Deploying: $COLOR ($NEW_PORT)"
             fi
             
-            if echo "$CHANGED_FILES" | grep -E "monitoring/" > /dev/null; then
-              MONITORING_CHANGED=true
-              echo "📊 Monitoring configuration changed"
-            fi
+            # Собираем новый образ
+            echo "🔨 Building new version..."
+            docker compose build nuxt-app
             
-            if echo "$CHANGED_FILES" | grep -E "nginx\.conf" > /dev/null; then
-              NGINX_CHANGED=true
-              echo "🌐 Nginx configuration changed"
-            fi
+            # Останавливаем контейнер на новом порту если есть
+            docker stop nuxt-app-staging 2>/dev/null || true
+            docker rm nuxt-app-staging 2>/dev/null || true
             
-            # Всегда перезапускаем сервисы если есть изменения в docker-compose.yml
-            if echo "$CHANGED_FILES" | grep -E "docker-compose\.yml" > /dev/null; then
-              echo "🔧 Docker Compose config changed - full restart needed"
-              docker compose down
-              docker compose up -d
-            elif [ "$APP_CHANGED" = true ]; then
-              echo "🔨 Building new application image..."
-              docker compose build nuxt-app
-              echo "🔄 Restarting application..."
-              docker compose up -d nuxt-app
-              sleep 10
-            fi
+            # Запускаем новый контейнер на staging порту
+            echo "🚀 Starting new version on port $NEW_PORT..."
+            docker run -d \
+              --name nuxt-app-staging \
+              --network cryptocenter_app-network \
+              -p $NEW_PORT:3000 \
+              -e NODE_ENV=production \
+              -e NUXT_PUBLIC_SITE_NAME=CryptoCenter \
+              -e NUXT_PUBLIC_SITE_URL=https://cryptocenter.finance \
+              cryptocenter-nuxt-app
             
-            if [ "$NGINX_CHANGED" = true ]; then
-              echo "🌐 Restarting Nginx..."
-              docker compose restart nginx
-            fi
+            # Ждем запуска
+            echo "⏳ Waiting for new version to start..."
+            sleep 20
             
-            if [ "$MONITORING_CHANGED" = true ]; then
-              echo "📊 Restarting monitoring services..."
-              if echo "$CHANGED_FILES" | grep -E "monitoring/dashboards/" > /dev/null; then
-                echo "📈 Dashboard files changed - restarting Grafana..."
-                docker compose restart grafana
-                sleep 15
+            # Health check новой версии
+            echo "🔍 Health checking new version..."
+            for i in {1..10}; do
+              if curl -f -s http://127.0.0.1:$NEW_PORT > /dev/null; then
+                echo "✅ New version is healthy"
+                HEALTH_OK=true
+                break
               fi
-              if echo "$CHANGED_FILES" | grep -E "monitoring/prometheus\.yml" > /dev/null; then
-                echo "📊 Prometheus config changed - restarting Prometheus..."
-                docker compose restart prometheus
+              echo "⏳ Attempt $i/10 - waiting..."
+              sleep 3
+            done
+            
+            if [ "$HEALTH_OK" != "true" ]; then
+              echo "❌ New version failed health check!"
+              docker logs nuxt-app-staging --tail 50
+              docker stop nuxt-app-staging
+              docker rm nuxt-app-staging
+              exit 1
+            fi
+            
+            # Переключаем nginx на новый порт
+            echo "🔄 Switching nginx to new version..."
+            cp nginx.conf nginx.conf.backup
+            sed -i "s/172.20.0.1:$CURRENT_PORT/172.20.0.1:$NEW_PORT/g" nginx.conf
+            
+            # Перезагружаем nginx конфигурацию
+            docker exec nginx nginx -s reload
+            
+            # Проверяем что nginx переключился успешно
+            sleep 5
+            if curl -f -s https://cryptocenter.finance > /dev/null; then
+              echo "✅ Nginx successfully switched to new version"
+            
+              # Останавливаем старую версию
+              echo "🛑 Stopping old version..."
+              if [ "$NEW_PORT" = "3000" ]; then
+                # Убиваем процесс на порту 3002
+                fuser -k 3002/tcp 2>/dev/null || true
+              else
+                # Убиваем процесс на порту 3000
+                fuser -k 3000/tcp 2>/dev/null || true
               fi
+            
+              # Переименовываем staging в основной
+              docker stop nuxt-app-staging
+              docker rename nuxt-app-staging nuxt-app-$NEW_PORT
+              docker start nuxt-app-$NEW_PORT
+            
+              echo "✅ $COLOR deployment completed successfully!"
+            
+            else
+              echo "❌ Nginx switch failed, rolling back..."
+              cp nginx.conf.backup nginx.conf
+              docker exec nginx nginx -s reload
+              docker stop nuxt-app-staging
+              docker rm nuxt-app-staging
+              exit 1
             fi
             
-            if [ "$APP_CHANGED" = false ] && [ "$MONITORING_CHANGED" = false ] && [ "$NGINX_CHANGED" = false ]; then
-              echo "🔄 No specific changes detected, performing safety restart..."
-              docker compose up -d
-            fi
+            # Обновляем остальные сервисы если нужно
+            echo "🔄 Updating other services..."
+            docker compose up -d --no-deps nginx prometheus grafana cadvisor node-exporter
             
+            # Проверяем финальный статус
+            echo "📊 Final status:"
+            docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+            
+            # Очистка
             echo "🧹 Cleaning up..."
             docker system prune -f
             
-            echo "📊 Final status:"
-            docker compose ps
-            
-            echo "✅ Deployment completed successfully!"
+            echo "✅ Blue-Green deployment completed!"
+            echo "🌐 Site available at: https://cryptocenter.finance"
