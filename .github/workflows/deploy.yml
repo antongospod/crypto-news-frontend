@@ -18,7 +18,7 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /opt/cryptocenter
-            echo "🔄 Starting Blue-Green deployment..."
+            echo "🚀 Starting Blue-Green deployment..."
             
             # Обновляем код
             git stash push -m "Auto-stash $(date)" || true
@@ -42,46 +42,17 @@ jobs:
             echo "🔨 Building new version..."
             docker compose build nuxt-app
             
-            # Останавливаем контейнер на новом порту если есть (только staging)
-            echo "🧹 Cleaning up staging containers..."
+            # Убиваем staging контейнер если есть
+            echo "🧹 Cleaning up staging container..."
             docker stop nuxt-app-staging 2>/dev/null || true
-            docker rm nuxt-app-staging 2>/dev/null || true
+            docker rm -f nuxt-app-staging 2>/dev/null || true
             
-            # Освобождаем только NEW_PORT (не трогаем CURRENT_PORT!)
-            if ss -tuln | grep ":$CURRENT_PORT " > /dev/null 2>&1; then
-              echo "✅ Current port $CURRENT_PORT is active"
-            else
-              echo "⚠️ Current port $CURRENT_PORT is not active - checking with lsof..."
-              if lsof -i :$CURRENT_PORT > /dev/null 2>&1; then
-                echo "✅ Current port $CURRENT_PORT is active (detected by lsof)"
-              else
-                echo "⚠️ Current port $CURRENT_PORT seems inactive"
-              fi
-            fi
-            
-            # Убиваем процессы только на NEW_PORT
-            echo "🔫 Killing processes on port $NEW_PORT..."
+            # Убиваем процессы на NEW_PORT (не трогаем CURRENT_PORT!)
+            echo "🔫 Freeing port $NEW_PORT..."
             fuser -k $NEW_PORT/tcp 2>/dev/null || true
             sleep 2
             
-            # Дополнительная очистка через lsof
-            lsof -ti :$NEW_PORT | xargs -r kill -9 2>/dev/null || true
-            sleep 1
-            
-            # Проверяем что NEW_PORT свободен
-            if ss -tuln | grep ":$NEW_PORT " > /dev/null 2>&1; then
-              echo "⚠️ Port $NEW_PORT is still busy after cleanup, forcing with lsof..."
-              lsof -ti :$NEW_PORT | xargs -r kill -9 2>/dev/null || true
-              sleep 3
-            
-              # Финальная проверка
-              if ss -tuln | grep ":$NEW_PORT " > /dev/null 2>&1; then
-                echo "❌ Cannot free port $NEW_PORT, aborting deployment"
-                exit 1
-              fi
-            fi
-            
-            # Запускаем новый контейнер на staging порту
+            # Запускаем новый контейнер на NEW_PORT
             echo "🚀 Starting new version on port $NEW_PORT..."
             docker run -d \
               --name nuxt-app-staging \
@@ -98,6 +69,7 @@ jobs:
             
             # Health check новой версии
             echo "🔍 Health checking new version..."
+            HEALTH_OK=false
             for i in {1..10}; do
               if curl -f -s http://127.0.0.1:$NEW_PORT > /dev/null; then
                 echo "✅ New version is healthy"
@@ -129,14 +101,16 @@ jobs:
             if curl -f -s https://cryptocenter.finance > /dev/null; then
               echo "✅ Nginx successfully switched to new version"
             
-              # ТОЛЬКО ТЕПЕРЬ останавливаем старую версию (после успешного переключения)
+              # ТОЛЬКО ТЕПЕРЬ останавливаем старую версию
               echo "🛑 Stopping old version on port $CURRENT_PORT..."
-              fuser -k $CURRENT_PORT/tcp 2>/dev/null || true
             
-              # Переименовываем staging в active
-              docker stop nuxt-app-staging
-              docker rename nuxt-app-staging nuxt-app-active
-              docker start nuxt-app-active
+              # Если текущий порт 3000, то останавливаем основной контейнер
+              if [ "$CURRENT_PORT" = "3000" ]; then
+                docker compose stop nuxt-app
+              else
+                # Если текущий порт 3002, убиваем процесс на нем
+                fuser -k $CURRENT_PORT/tcp 2>/dev/null || true
+              fi
             
               echo "✅ $COLOR deployment completed successfully!"
             
