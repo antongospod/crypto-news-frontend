@@ -1,9 +1,9 @@
 apiVersion: 1
 
 providers:
-  - name: 'cryptocenter-dashboards'
+  - name: cryptocenter-dashboards
     orgId: 1
-    folder: 'CryptoCenter'
+    folder: CryptoCenter
     type: file
     disableDeletion: false
     updateIntervalSeconds: 10

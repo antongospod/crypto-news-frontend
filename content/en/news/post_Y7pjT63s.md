@@ -19,7 +19,8 @@ As of the latest market shifts in June 2024, Real World Assets (RWA) have surged
 
 Major DeFi protocols are partnering with fintech startups and traditional financial institutions to tokenize real-world assets, opening avenues for both individual and institutional investors. Initiatives now include tokenized real estate, commodities, and financial instruments, unlocking new forms of collateral and liquidity for the DeFi ecosystem.
 
-Notably, MakerDAO and Centrifuge are at the vanguard:  
+Notably, MakerDAO and Centrifuge are at the vanguard:
+
 - **MakerDAO** recently onboarded tokenized real estate loans into its collateral portfolio, broadening the utility of its decentralized stablecoin model.
 - **Centrifuge** enables the seamless transition of RWAs onto the blockchain, combining regulatory transparency with increased capital access for traditional businesses.
 
@@ -28,6 +29,7 @@ Notably, MakerDAO and Centrifuge are at the vanguard:
 Growing RWA integration is transforming DeFi into a more robust and less volatile financial system. Institutional investors, long wary of crypto market volatility, are attracted by the prospect of stable yields backed by real-world collateral. The Total Value Locked (TVL) in RWA-focused protocols is reaching unprecedented highs.
 
 However, challenges persist:
+
 - **Regulatory compliance** remains a major obstacle, with global frameworks for tokenized assets still evolving.
 - **Reliable oracles** and data integrity are critical for on-chain/off-chain asset reconciliation.
 - **Scalability**, supported by Layer 2 solutions, is increasingly necessary as adoption grows.

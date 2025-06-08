@@ -9,37 +9,59 @@ const sentinel = ref<HTMLElement | null>(null)
 
 useLangMeta('news.meta', '/images/home/cryptocenter-cover.webp')
 
-const { data: initialPosts } = await useAsyncData('news-posts', () => {
+const { data: initialPosts, refresh } = await useAsyncData('news-posts', () => {
   const offset = (page.value - 1) * limit
   return queryCollection(locale.value)
-      .order('date', 'DESC')
-      .skip(offset)
-      .limit(limit)
-      .select('title', 'description', 'img', 'date', 'tag', 'path', 'alt')
-      .all()
+    .order('date', 'DESC')
+    .skip(offset)
+    .limit(limit)
+    .select('title', 'description', 'img', 'date', 'tag', 'path', 'alt')
+    .all()
+}, {
+  watch: [locale],
 })
 
 const posts = ref(structuredClone(initialPosts.value))
 
-if (posts.value?.length) {
-  page.value++
-  if (posts.value.length < limit) hasMore.value = false
-} else {
-  hasMore.value = false
+function resetState() {
+  page.value = 1
+  hasMore.value = true
+  posts.value = structuredClone(initialPosts.value)
+
+  if (posts.value?.length) {
+    page.value++
+    if (posts.value.length < limit)
+      hasMore.value = false
+  }
+  else {
+    hasMore.value = false
+  }
 }
 
+resetState()
+
+watch(locale, async () => {
+  await refresh()
+  resetState()
+})
+
+watch(initialPosts, () => {
+  resetState()
+})
+
 async function loadMorePosts() {
-  if (isPending.value || !hasMore.value) return
+  if (isPending.value || !hasMore.value)
+    return
 
   isPending.value = true
 
   const offset = (page.value - 1) * limit
   const newPosts = await queryCollection(locale.value)
-      .order('date', 'DESC')
-      .skip(offset)
-      .limit(limit)
-      .select('title', 'description', 'img', 'date', 'tag', 'path', 'alt')
-      .all()
+    .order('date', 'DESC')
+    .skip(offset)
+    .limit(limit)
+    .select('title', 'description', 'img', 'date', 'tag', 'path', 'alt')
+    .all()
 
   if (newPosts.length < limit) {
     hasMore.value = false
@@ -52,19 +74,19 @@ async function loadMorePosts() {
 
 onMounted(() => {
   const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) {
-          loadMorePosts()
-        }
-      },
-      { root: null, rootMargin: '0px', threshold: 1.0 }
+    (entries) => {
+      if (entries[0]?.isIntersecting) {
+        loadMorePosts()
+      }
+    },
+    { root: null, rootMargin: '0px', threshold: 1.0 },
   )
 
-  if (sentinel.value) observer.observe(sentinel.value)
+  if (sentinel.value)
+    observer.observe(sentinel.value)
 
   onUnmounted(() => observer.disconnect())
 })
-
 </script>
 
 <template>
@@ -78,22 +100,22 @@ onMounted(() => {
       </p>
     </div>
     <section
-        v-if="posts?.length"
-        class="grid grid-cols-1 gap-5 rounded-sm p-4 lg:(grid-cols-3 gap-5) md:(grid-cols-2 gap-10) sm:(px-10 py-15)"
+      v-if="posts?.length"
+      class="grid grid-cols-1 gap-5 rounded-sm p-4 lg:(grid-cols-3 gap-5) md:(grid-cols-2 gap-10) sm:(px-10 py-15)"
     >
       <UiScrollAnimation
-          v-for="(article, key) in posts"
-          :key="article.path"
-          animation="fade-up"
-          :delay="key * 100"
-          :duration="1200"
+        v-for="(article, key) in posts"
+        :key="article.path"
+        animation="fade-up"
+        :delay="key * 100"
+        :duration="1200"
       >
         <NuxtLinkLocale
-            class="group flex flex-col no-underline h-full"
-            :to="article.path"
+          class="group h-full flex flex-col no-underline"
+          :to="article.path"
         >
           <!-- Обёртка для изображения с фиксированным соотношением сторон -->
-          <div v-if="article.img" class="aspect-[16/10] overflow-hidden rounded-md b-1 b-light-700 b-solid dark:b-dark-700">
+          <div v-if="article.img" class="aspect-[16/10] overflow-hidden b-1 b-light-700 rounded-md b-solid dark:b-dark-700">
             <NuxtImg
               crossorigin="anonymous"
               :alt="article.alt"
@@ -106,8 +128,8 @@ onMounted(() => {
           </div>
 
           <!-- Текстовая часть -->
-          <div class="flex flex-col justify-between flex-1 rounded-b-md pt-4 text-black dark:text-white">
-            <div class="children:(inline-flex core-border rounded-md core-ui px-4 py-1.5 text-xs font-mono op80 dark:op100) space-x-2 mb-2">
+          <div class="flex flex-1 flex-col justify-between rounded-b-md pt-4 text-black dark:text-white">
+            <div class="mb-2 children:(inline-flex core-border rounded-md core-ui px-4 py-1.5 text-xs font-mono op80 dark:op100) space-x-2">
               <UiDate v-if="article.date" :date="article.date" />
               <p v-if="article.tag">
                 {{ useParseTags(article.tag) }}
@@ -118,7 +140,7 @@ onMounted(() => {
               {{ article.title }}
             </h2>
 
-            <p class="font-300 op70 line-clamp-3 mt-1">
+            <p class="line-clamp-3 mt-1 font-300 op70">
               {{ article.description }}
             </p>
           </div>

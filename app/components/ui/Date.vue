@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-const { locale } = useI18n()
 
 const { date } = defineProps<{
   date: string
 }>()
+
+const { locale } = useI18n()
 
 const normalizedDate = computed(() => {
   if (/^\d{2}\.\d{2}\.\d{4}$/.test(date)) {

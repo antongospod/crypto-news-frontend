@@ -3,7 +3,7 @@
 </script>
 
 <template>
-asd
+  asd
 </template>
 
 <style scoped>

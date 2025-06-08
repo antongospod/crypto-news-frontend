@@ -3,34 +3,34 @@ const { locale, t } = useI18n()
 
 const { data: features } = await useAsyncData('featured-posts', () => {
   return queryCollection(locale.value)
-      .where('feature', '=', true)
-      .order('date', 'DESC')
-      .select('title', 'description', 'date', 'tag', 'path')
-      .limit(5)
-      .all()
+    .order('date', 'DESC')
+    .select('title', 'description', 'date', 'tag', 'path')
+    .limit(5)
+    .all()
+}, {
+  watch: [locale],
 })
 </script>
 
-
 <template>
-  <div class="mx-auto bg-light-3 py10 dark:bg-dark-900" v-if="features && features.length > 0">
+  <div v-if="features && features.length > 0" class="mx-auto bg-light-3 py10 dark:bg-dark-900">
     <div class="mx-auto mt10 max-w-lg flex items-center justify-between px6 md:max-w-5xl 2xl:px45 xl:px25">
       <div class="mb-10 flex flex-col justify-center space-y-2">
         <UiScrollAnimation
-            id="latest-posts"
-            class="m0 text-4xl font-bold tracking-wide md:text-5xl"
-            element="h2"
-            animation="fade-down"
-            :duration="800"
+          id="latest-posts"
+          class="m0 text-4xl font-bold tracking-wide md:text-5xl"
+          element="h2"
+          animation="fade-down"
+          :duration="800"
         >
           {{ t('home.news.latest') }}
         </UiScrollAnimation>
         <UiScrollAnimation
-            class="m0 text-sm text-dark-400 dark:text-gray-200"
-            element="p"
-            animation="fade-down"
-            :duration="800"
-            :delay="100"
+          class="m0 text-sm text-dark-400 dark:text-gray-200"
+          element="p"
+          animation="fade-down"
+          :duration="800"
+          :delay="100"
         >
           {{ t('home.news.description') }}
         </UiScrollAnimation>
@@ -43,7 +43,7 @@ const { data: features } = await useAsyncData('featured-posts', () => {
       <article
         v-for="(feature, key) in features?.slice(0, 3)"
         :key="feature.path"
-        class="group transition duration-300 ease-linear hover:(scale-102 bg-white shadow-lg dark:bg-black will-change-transform transform-gpu) core-theme"
+        class="group transition duration-300 ease-linear hover:(scale-102 transform-gpu bg-white shadow-lg will-change-transform dark:bg-black) core-theme"
       >
         <UiScrollAnimation
           class="col-span-1 cursor-pointer p-5 dark:text-white"
@@ -53,8 +53,7 @@ const { data: features } = await useAsyncData('featured-posts', () => {
         >
           <NuxtLinkLocale class="group-hover text-black no-underline dark:text-white" :to="feature.path">
             <div v-if="feature.tag" class="mb-2 flex flex-wrap gap-1">
-              <span class="rounded-md bg-light2 px4 py1 text-sm op-90 core-border dark:bg-dark8"
-              >
+              <span class="rounded-md bg-light2 px4 py1 text-sm op-90 core-border dark:bg-dark8">
                 {{ useParseTags(feature.tag) }}
               </span>
             </div>
@@ -91,14 +90,14 @@ const { data: features } = await useAsyncData('featured-posts', () => {
 
       <article
         v-for="(feature, key) in features?.slice(3, 6)" :key="feature.path"
-        class="group transition duration-300 ease-linear hover:(scale-102 bg-white shadow-lg dark:bg-black will-change-transform transform-gpu) core-theme"
+        class="group transition duration-300 ease-linear hover:(scale-102 transform-gpu bg-white shadow-lg will-change-transform dark:bg-black) core-theme"
         role="article"
       >
         <UiScrollAnimation
-            class="col-span-1 cursor-pointer p-5 dark:text-white"
-            animation="fade-down"
-            :delay="key * 250"
-            :duration="1200"
+          class="col-span-1 cursor-pointer p-5 dark:text-white"
+          animation="fade-down"
+          :delay="key * 250"
+          :duration="1200"
         >
           <NuxtLinkLocale
             class="group-hover text-black no-underline dark:text-white" :to="feature.path"

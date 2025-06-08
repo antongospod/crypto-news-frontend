@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
-import {NuxtLinkLocale} from "#components";
+
+import type { NuxtLinkLocale } from '#components'
 
 type AnimationType =
   | 'fade-up'

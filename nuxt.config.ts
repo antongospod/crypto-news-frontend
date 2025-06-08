@@ -1,5 +1,4 @@
 import { i18nConfig } from './i18n/config'
-import { resolve } from "node:dns";
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
@@ -89,8 +88,8 @@ export default defineNuxtConfig({
   content: {
     database: {
       type: 'sqlite',
-      filename: process.env.NODE_ENV === 'production' ? '/tmp/contents.sqlite' : './.data/content/contents.sqlite'
-    }
+      filename: process.env.NODE_ENV === 'production' ? '/tmp/contents.sqlite' : './.data/content/contents.sqlite',
+    },
   },
   css: [
     'normalize.css/normalize.css',
@@ -107,7 +106,7 @@ export default defineNuxtConfig({
     future: {
       nativeSWR: true,
     },
-    preset: 'node-server'
+    preset: 'node-server',
   },
   devtools: {
     enabled: false,

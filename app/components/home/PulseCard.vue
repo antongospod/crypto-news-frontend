@@ -44,22 +44,21 @@ const highlights: Highlight[] = [
     month: t('home.pulseCard.highlight3.month'),
     reference: 'https://cointelegraph.com/news/trump-truth-social-files-spot-bitcoin-etf',
   },
-];
-
+]
 </script>
 
 <template>
   <div class="mx-auto mb4 border rounded-md px4 pt4 lg:w-4xl sm:core-border sm:core-theme md:(px8 pt8)">
     <div class="mb-4 flex flex-col items-center justify-between rounded-lg bg-yellow-4 p-3 sm:mb-6 sm:flex-row sm:p-4">
       <UiScrollAnimation
-          class="mb-2 text-center text-xl text-black font-bold sm:mb-0 sm:text-left md:text-4xl sm:text-2xl"
-          element="h2"
-          animation="zoom-in"
-          :duration="800"
+        class="mb-2 text-center text-xl text-black font-bold sm:mb-0 sm:text-left md:text-4xl sm:text-2xl"
+        element="h2"
+        animation="zoom-in"
+        :duration="800"
       >
         {{ t('home.pulseCard.title') }}
       </UiScrollAnimation>
-      <Icon name="lucide:heart-pulse" class="h-8 w-8 text-black sm:h-12 sm:w-12 animate-heart-beat" aria-hidden="true" />
+      <Icon name="lucide:heart-pulse" class="h-8 w-8 animate-heart-beat text-black sm:h-12 sm:w-12" aria-hidden="true" />
     </div>
     <div class="grid gap-3 md:grid-cols-2 sm:gap-4">
       <section aria-labelledby="trend-title" class="rounded-lg bg-zinc-900 p-3 sm:p-4">
@@ -71,13 +70,13 @@ const highlights: Highlight[] = [
         </div>
         <ul role="list" class="p0 space-y-3">
           <UiScrollAnimation
-              v-for="(trend, key) in trends"
-              :key="trend.id"
-              class="flex cursor-pointer items-center border-l-4 rounded bg-zinc-800 p-3 transition-all hover:bg-zinc-700"
-              element="li"
-              animation="fade-down"
-              :delay="key * 250"
-              :duration="1200"
+            v-for="(trend, key) in trends"
+            :key="trend.id"
+            class="flex cursor-pointer items-center border-l-4 rounded bg-zinc-800 p-3 transition-all hover:bg-zinc-700"
+            element="li"
+            animation="fade-down"
+            :delay="key * 250"
+            :duration="1200"
           >
             <span class="px4 text-3xl text-white font-bold op70">{{ trend.id }}.</span>
             <p class="text-sm text-white font-medium sm:text-base">
@@ -95,18 +94,18 @@ const highlights: Highlight[] = [
         </div>
         <ul role="list" class="list-none p0 space-y-3">
           <UiScrollAnimation
-              v-for="(highlight, key) in highlights"
-              :key="highlight.id"
-              class="cursor-pointer border-l-4 rounded bg-yellow-4 p-3 transition-all hover:bg-yellow-5"
-              element="li"
-              animation="fade-down"
-              :delay="key * 250"
-              :duration="1200"
+            v-for="(highlight, key) in highlights"
+            :key="highlight.id"
+            class="cursor-pointer border-l-4 rounded bg-yellow-4 p-3 transition-all hover:bg-yellow-5"
+            element="li"
+            animation="fade-down"
+            :delay="key * 250"
+            :duration="1200"
           >
             <NuxtLink
-                :to="highlight.reference"
-                class="relative grid grid-cols-[1fr,auto] items-start gap-2 decoration-none" target="_blank"
-                :aria-label="`${highlight.title} - ${highlight.subtext} ${t('home.pulseCard.ariaLabel')}`"
+              :to="highlight.reference"
+              class="relative grid grid-cols-[1fr,auto] items-start gap-2 decoration-none" target="_blank"
+              :aria-label="`${highlight.title} - ${highlight.subtext} ${t('home.pulseCard.ariaLabel')}`"
             >
               <div class="min-w-0">
                 <p class="truncate text-sm text-black font-semibold sm:text-base">
