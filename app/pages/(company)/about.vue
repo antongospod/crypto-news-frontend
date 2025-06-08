@@ -8,6 +8,7 @@ useLangMeta('about.meta', seoImage)
 </script>
 
 <template>
+  <UiPulseOverlay />
   <div class="min-h-screen flex flex-col items-center md:mt-20">
     <h1>{{ t('about.title') }}</h1>
     <div class="p8 text-sm prose sm:(p2 text-base)">

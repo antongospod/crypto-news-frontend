@@ -118,13 +118,14 @@ onUnmounted(() => {
 </script>
 
 <template>
+  <UiPulseOverlay />
   <main class="mx-auto text-black sm:mb-10 space-y-10 2xl:px-35 lg:px-25 md:px-5 xl:px-28 dark:text-white">
     <div class="mx-4 mt-5 flex flex-col lg:mx-10 sm:(mx-10 mt-15) space-y-2">
       <h1 class="mb-0 text-3xl font-semibold sm:text-5xl">
-        {{ t("news.title") }}
+        {{ t('news.title') }}
       </h1>
       <p class="text-md break-words font-300 op70 sm:(w-2/3 text-xl) dark:text-gray-300">
-        {{ t("news.description") }}
+        {{ t('news.description') }}
       </p>
     </div>
 
@@ -133,18 +134,18 @@ onUnmounted(() => {
       <div v-for="i in 6" :key="i" class="relative overflow-hidden">
         <!-- Изображение скелетон -->
         <div class="relative aspect-[16/10] overflow-hidden rounded-md bg-gray-200 dark:bg-dark8">
-          <div class="animate-shimmer absolute inset-0 from-transparent via-white/20 to-transparent bg-gradient-to-r -translate-x-full dark:via-white/10" />
+          <div class="absolute inset-0 animate-shimmer from-transparent via-white/20 to-transparent bg-gradient-to-r -translate-x-full dark:via-white/10" />
         </div>
         <!-- Текстовые скелетоны -->
         <div class="mt-4 space-y-2">
           <div class="relative h-4 w-3/4 overflow-hidden rounded bg-gray-200 dark:bg-dark8">
-            <div class="animate-shimmer-delayed-200 absolute inset-0 from-transparent via-white/20 to-transparent bg-gradient-to-r -translate-x-full dark:via-white/10" />
+            <div class="absolute inset-0 animate-shimmer-delayed-200 from-transparent via-white/20 to-transparent bg-gradient-to-r -translate-x-full dark:via-white/10" />
           </div>
           <div class="relative h-3 overflow-hidden rounded bg-gray-200 dark:bg-dark8">
-            <div class="animate-shimmer-delayed-400 absolute inset-0 from-transparent via-white/20 to-transparent bg-gradient-to-r -translate-x-full dark:via-white/10" />
+            <div class="absolute inset-0 animate-shimmer-delayed-400 from-transparent via-white/20 to-transparent bg-gradient-to-r -translate-x-full dark:via-white/10" />
           </div>
           <div class="relative h-3 w-5/6 overflow-hidden rounded bg-gray-200 dark:bg-dark8">
-            <div class="animate-shimmer-delayed-600 absolute inset-0 from-transparent via-white/20 to-transparent bg-gradient-to-r -translate-x-full dark:via-white/10" />
+            <div class="absolute inset-0 animate-shimmer-delayed-600 from-transparent via-white/20 to-transparent bg-gradient-to-r -translate-x-full dark:via-white/10" />
           </div>
         </div>
       </div>

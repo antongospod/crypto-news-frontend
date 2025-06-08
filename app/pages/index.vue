@@ -3,6 +3,7 @@ useLangMeta('home.seo', '/images/home/cryptocenter-cover.webp')
 </script>
 
 <template>
+  <UiPulseOverlay />
   <main class="flex flex-col justify-center">
     <section aria-labelledby="hero">
       <HomeHero />

@@ -209,7 +209,7 @@ export default defineConfig({
       'bg-element-light dark:(bg-element-dark text-white) text-black',
     'core-border': 'dark:b-dark4 b-gray-3 b-1 b-solid',
     'core-ui': 'dark:(bg-dark9 text-white) bg-gray-100 text-black',
-    'pulse-overlay': 'absolute z-10 h-8 w-full animate-slow-pulse rounded-md bg-blue-6 blur-2xl will-change-transform -top-1 dark:bg-yellow-400/30',
+    'pulse-overlay': 'absolute z-10 h-10 w-full animate-slow-pulse rounded-md bg-blue-6 blur-2xl will-change-transform dark:bg-yellow-400/40',
   },
   content: {
     pipeline: {

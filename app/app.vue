@@ -80,7 +80,6 @@ useSeoMeta({
     </Head>
     <Body class="m0 font-mono core-theme">
       <AppHeader class="sticky top-0 z-20" />
-      <UiPulseOverlay />
       <UiInfoBar />
       <NuxtPage />
       <AppFooter />

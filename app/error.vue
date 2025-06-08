@@ -19,18 +19,11 @@ useHead({
   title: title.value,
   meta: [{ name: 'robots', content: 'noindex' }],
 })
-
-const handleError = () => clearError({ redirect: localePath('/') })
-
-function handleGoBack() {
-  if (window.history.length > 1)
-    window.history.back()
-  else handleError()
-}
 </script>
 
 <template>
   <Body class="m0 font-mono core-theme">
+    <UiPulseOverlay />
     <client-only v-if="props.error">
       <section class="h-screen flex items-center justify-center">
         <main
@@ -69,14 +62,13 @@ function handleGoBack() {
           </UiScrollAnimation>
 
           <UiScrollAnimation
-            element="button"
             animation="fade-up"
             :delay="1200"
             :duration="1200"
-            class="mt-6 cursor-pointer rounded-sm px-6 py-2 text-sm font-bold core-border hover:core-theme"
-            @click="handleGoBack"
           >
-            {{ t('error.return') }}
+            <NuxtLinkLocale to="/" class="mt-6 inline-flex transform-gpu items-center justify-center border-brand-light rounded-full border-dashed px-6 py-3 text-blue-6 no-underline transition-all duration-300 ease-in-out will-change-transform hover:scale-105 space-x-2 core-border dark:border-yellow-3 hover:border-solid dark:text-yellow-4">
+              {{ t('error.return') }}
+            </NuxtLinkLocale>
           </UiScrollAnimation>
         </main>
       </section>

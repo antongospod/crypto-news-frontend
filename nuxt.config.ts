@@ -13,7 +13,7 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     public: {
-      version: '1.0.0',
+      version: '1.0.1-alpha',
       environment: process.env.NODE_ENV,
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL,
       siteTitle: process.env.NUXT_PUBLIC_SITE_NAME,
