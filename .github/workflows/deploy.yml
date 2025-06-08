@@ -48,18 +48,37 @@ jobs:
             docker rm nuxt-app-staging 2>/dev/null || true
             
             # Освобождаем только NEW_PORT (не трогаем CURRENT_PORT!)
-            if ! netstat -tuln | grep ":$CURRENT_PORT " > /dev/null; then
-              echo "⚠️ Current port $CURRENT_PORT is not active - something is wrong!"
+            if ss -tuln | grep ":$CURRENT_PORT " > /dev/null 2>&1; then
+              echo "✅ Current port $CURRENT_PORT is active"
+            else
+              echo "⚠️ Current port $CURRENT_PORT is not active - checking with lsof..."
+              if lsof -i :$CURRENT_PORT > /dev/null 2>&1; then
+                echo "✅ Current port $CURRENT_PORT is active (detected by lsof)"
+              else
+                echo "⚠️ Current port $CURRENT_PORT seems inactive"
+              fi
             fi
             
             # Убиваем процессы только на NEW_PORT
+            echo "🔫 Killing processes on port $NEW_PORT..."
             fuser -k $NEW_PORT/tcp 2>/dev/null || true
+            sleep 2
+            
+            # Дополнительная очистка через lsof
+            lsof -ti :$NEW_PORT | xargs -r kill -9 2>/dev/null || true
+            sleep 1
             
             # Проверяем что NEW_PORT свободен
-            if netstat -tuln | grep ":$NEW_PORT " > /dev/null; then
-              echo "⚠️ Port $NEW_PORT is still busy after cleanup, forcing..."
-              fuser -k $NEW_PORT/tcp 2>/dev/null || true
+            if ss -tuln | grep ":$NEW_PORT " > /dev/null 2>&1; then
+              echo "⚠️ Port $NEW_PORT is still busy after cleanup, forcing with lsof..."
+              lsof -ti :$NEW_PORT | xargs -r kill -9 2>/dev/null || true
               sleep 3
+            
+              # Финальная проверка
+              if ss -tuln | grep ":$NEW_PORT " > /dev/null 2>&1; then
+                echo "❌ Cannot free port $NEW_PORT, aborting deployment"
+                exit 1
+              fi
             fi
             
             # Запускаем новый контейнер на staging порту
