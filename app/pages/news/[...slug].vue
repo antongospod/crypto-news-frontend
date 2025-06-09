@@ -39,6 +39,7 @@ useSeoMeta({
 </script>
 
 <template>
+  <UiPulseOverlay />
   <main v-if="post" class="mx-auto mt-10 md:(mb-0 mt-15 px-6) sm:mt-10">
     <article
       class="pb-2 text-inherit md:(mb-12) sm:rounded-sm"

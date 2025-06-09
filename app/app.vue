@@ -84,10 +84,14 @@ useSeoMeta({
       </template>
     </Head>
     <Body class="m0 font-mono core-theme">
-      <AppHeader class="sticky top-0 z-20" />
-      <UiInfoBar />
-      <NuxtPage />
-      <AppFooter />
+      <div id="app" class="min-h-screen flex flex-col">
+        <AppHeader class="sticky top-0 z-20" />
+        <UiInfoBar />
+        <main class="flex-1">
+          <NuxtPage />
+        </main>
+        <AppFooter />
+      </div>
     </Body>
   </Html>
 </template>

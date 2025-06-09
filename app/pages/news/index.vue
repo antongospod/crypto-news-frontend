@@ -119,7 +119,7 @@ onUnmounted(() => {
 
 <template>
   <UiPulseOverlay />
-  <main class="mx-auto text-black sm:mb-10 space-y-10 2xl:px-35 lg:px-25 md:px-5 xl:px-28 dark:text-white">
+  <div class="mx-auto text-black sm:mb-10 space-y-10 2xl:px-35 lg:px-25 md:px-5 xl:px-28 dark:text-white">
     <div class="mx-4 mt-5 flex flex-col lg:mx-10 sm:(mx-10 mt-15) space-y-2">
       <h1 class="mb-0 text-3xl font-semibold sm:text-5xl">
         {{ t('news.title') }}
@@ -201,10 +201,12 @@ onUnmounted(() => {
       </UiScrollAnimation>
     </section>
 
-    <p v-else class="text-center op70">
-      {{ t('news.noPosts') }}
-    </p>
+    <div v-else class="min-h-[40vh] flex items-center justify-center">
+      <p class="text-center text-lg op70">
+        {{ t('news.noPosts') }}
+      </p>
+    </div>
 
     <div ref="sentinel" class="h-1" aria-hidden="true" />
-  </main>
+  </div>
 </template>

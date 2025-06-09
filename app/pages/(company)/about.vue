@@ -9,7 +9,7 @@ useLangMeta('about.meta', seoImage)
 
 <template>
   <UiPulseOverlay />
-  <div class="min-h-screen flex flex-col items-center md:mt-20">
+  <div class="flex flex-col items-center py-10 md:py-20">
     <h1>{{ t('about.title') }}</h1>
     <div class="p8 text-sm prose sm:(p2 text-base)">
       <p>{{ t('about.paragraphs.introduction') }}</p>
@@ -60,9 +60,9 @@ useLangMeta('about.meta', seoImage)
       "title": "Chi siamo",
       "paragraphs": {
         "introduction": "Il mondo delle criptovalute è in continua evoluzione: dinamico, complesso e pieno di opportunità. Con sviluppi quotidiani nella tecnologia blockchain e negli asset digitali, restare informati è più importante che mai.",
-        "mission": "La nostra missione è offrire notizie e analisi accurate, tempestive e accessibili su criptovalute, innovazioni blockchain e sull’economia digitale in crescita.",
+        "mission": "La nostra missione è offrire notizie e analisi accurate, tempestive e accessibili su criptovalute, innovazioni blockchain e sull'economia digitale in crescita.",
         "goal": "Vogliamo essere un punto di riferimento affidabile per investitori, sviluppatori ed appassionati che desiderano comprendere i mercati crypto e le tendenze, da Bitcoin ed Ethereum a DeFi e Web3.",
-        "importance": "In un panorama pieno di hype e disinformazione, un’informazione chiara e un’analisi indipendente sono essenziali. CryptoCenter aiuta i lettori a navigare i rischi e a scoprire valore in un contesto in costante cambiamento.",
+        "importance": "In un panorama pieno di hype e disinformazione, un'informazione chiara e un'analisi indipendente sono essenziali. CryptoCenter aiuta i lettori a navigare i rischi e a scoprire valore in un contesto in costante cambiamento.",
         "closing": "Il mondo cripto continua a evolversi — e noi con lui. Grazie per far parte del nostro viaggio: esploriamo insieme il futuro della finanza."
       },
       "meta": {
