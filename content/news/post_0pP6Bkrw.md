@@ -33,6 +33,7 @@ L’iniziativa non è priva di sfide. Fondamentale sarà il rispetto della regol
 ### Quali prospettive per gli utenti?
 
 L’inclusione di RWA promette:
+
 - Yields (rendimenti) meno volatili
 - Riduzione dei rischi rispetto alle esposizioni criptografiche pure
 - Nuove opportunità di diversificazione del portafoglio

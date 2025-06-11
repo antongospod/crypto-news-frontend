@@ -29,7 +29,7 @@ Polygon's growth is underscored by a series of strategic partnerships with major
 - **Aave**
 - **Yearn Finance**
 
-These collaborations have been crucial in enhancing liquidity pools, providing scaling solutions, and expanding Polygon’s user base. 
+These collaborations have been crucial in enhancing liquidity pools, providing scaling solutions, and expanding Polygon’s user base.
 
 > "Polygon's network utility is expanding rapidly as top DeFi protocols choose to build and scale on its infrastructure," noted a leading blockchain analyst.
 

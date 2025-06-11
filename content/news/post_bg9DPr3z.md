@@ -42,5 +42,5 @@ La sfida sarà trovare **un equilibrio tra decentralizzazione** e necessità di 
 
 L’apertura di MakerDAO verso i Real World Assets rappresenta una tappa fondamentale per la maturità del settore DeFi e il suo dialogo con la finanza tradizionale. Resterà da vedere se questa tendenza sarà adottata in modo generalizzato, ma le basi poste sono solide e promettenti per l’innovazione futura.
 
-**Domanda ai lettori:**  
+**Domanda ai lettori:**
 Credete che i Real World Assets diventeranno lo standard anche per altri protocolli DeFi? Come cambieranno il concetto di rischio nella finanza crypto?

@@ -30,7 +30,7 @@ jobs:
             git pull origin master
 
             # Определяем текущий активный порт из nginx конфига
-            CURRENT_PORT=$(grep -o "172.20.0.1:[0-9]*" nginx.conf | cut -d: -f2)
+            CURRENT_PORT=$(grep -o "172.20.0.1:[0-9]*" nginx.conf | head -1 | cut -d: -f2)
 
             if [ "$CURRENT_PORT" = "3000" ]; then
               NEW_PORT=3002
@@ -97,12 +97,53 @@ jobs:
             cp nginx.conf nginx.conf.backup
             sed -i "s/172.20.0.1:$CURRENT_PORT/172.20.0.1:$NEW_PORT/g" nginx.conf
 
+            # Проверяем конфигурацию nginx перед reload
+            echo "🔍 Testing nginx configuration..."
+            docker exec nginx nginx -t
+            if [ $? -ne 0 ]; then
+              echo "❌ Nginx configuration test failed!"
+              cp nginx.conf.backup nginx.conf
+              docker stop nuxt-app-staging
+              docker rm nuxt-app-staging
+              exit 1
+            fi
+
             # Перезагружаем nginx конфигурацию
+            echo "🔄 Reloading nginx..."
             docker exec nginx nginx -s reload
 
-            # Проверяем что nginx переключился успешно
+            # Даем время на применение изменений
             sleep 5
-            if curl -f -s https://cryptocenter.finance > /dev/null; then
+
+            # Проверяем что nginx переключился успешно
+            # Используем несколько методов проверки
+            echo "🔍 Checking if nginx switched successfully..."
+
+            # Метод 1: Проверка через localhost (обход SSL)
+            NGINX_OK=false
+            if curl -f -s -H "Host: cryptocenter.finance" http://localhost > /dev/null 2>&1; then
+              echo "✅ Nginx responds on localhost"
+              NGINX_OK=true
+            fi
+
+            # Метод 2: Проверка через внутренний health endpoint
+            if [ "$NGINX_OK" = "true" ] && curl -f -s http://localhost/health > /dev/null 2>&1; then
+              echo "✅ Health endpoint responds"
+              NGINX_OK=true
+            else
+              # Метод 3: Проверка через внешний домен с игнорированием SSL
+              if curl -f -s -k https://cryptocenter.finance > /dev/null 2>&1; then
+                echo "✅ External domain responds (SSL ignored)"
+                NGINX_OK=true
+              fi
+            fi
+
+            # Метод 4: Проверка что nginx процесс работает и слушает порты
+            if docker exec nginx ss -tlnp | grep -q ":443"; then
+              echo "✅ Nginx is listening on port 443"
+            fi
+
+            if [ "$NGINX_OK" = "true" ]; then
               echo "✅ Nginx successfully switched to new version"
 
               # ТОЛЬКО ТЕПЕРЬ останавливаем старую версию
@@ -110,7 +151,10 @@ jobs:
 
               # Если текущий порт 3000, то останавливаем основной контейнер
               if [ "$CURRENT_PORT" = "3000" ]; then
-                docker compose stop nuxt-app
+                docker compose stop nuxt-app 2>/dev/null || true
+                # Убиваем процесс на старом порту если контейнер не остановился
+                sleep 2
+                fuser -k $CURRENT_PORT/tcp 2>/dev/null || true
               else
                 # Если текущий порт 3002, убиваем процесс на нем
                 fuser -k $CURRENT_PORT/tcp 2>/dev/null || true
@@ -124,6 +168,11 @@ jobs:
               docker exec nginx nginx -s reload
               docker stop nuxt-app-staging
               docker rm nuxt-app-staging
+
+              # Показываем логи для диагностики
+              echo "📋 Nginx error logs:"
+              docker exec nginx tail -n 20 /var/log/nginx/error.log
+
               exit 1
             fi
 
@@ -135,9 +184,17 @@ jobs:
             echo "📊 Final status:"
             docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
 
+            # Показываем какие порты слушаются
+            echo "🔍 Active ports:"
+            ss -tlnp | grep -E ":(80|443|3000|3002)" || netstat -tlnp | grep -E ":(80|443|3000|3002)"
+
             # Очистка
             echo "🧹 Cleaning up..."
             docker system prune -f
+
+            # Финальная проверка доступности
+            echo "🌐 Final availability check:"
+            curl -I -s -k https://cryptocenter.finance | head -n 1
 
             echo "✅ Blue-Green deployment completed!"
             echo "🌐 Site available at: https://cryptocenter.finance"

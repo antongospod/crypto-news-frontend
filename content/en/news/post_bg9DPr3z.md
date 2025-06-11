@@ -58,5 +58,5 @@ Analysts expect these changes to make DeFi platforms more appealing to a mainstr
 
 Some analysts warn that while RWA integration offers diversification, it introduces new complexities around **risk assessment**, **liquidity management**, and **regulatory compliance**. Effective governance will be critical as DeFi matures.
 
-**Question to Readers:**  
+**Question to Readers:**
 Will Real World Assets soon be standard across DeFi, and how might they reshape risk management in crypto finance?

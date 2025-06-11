@@ -21,6 +21,7 @@ Gli RWA rappresentano **beni tangibili** come immobili, materie prime o crediti 
 ## I primi protagonisti: MakerDAO e Centrifuge
 
 Recentemente, alcuni protocolli leader hanno compiuto passi decisivi verso questo modello:
+
 - **MakerDAO**, una delle principali piattaforme DeFi, ha ampliato le proprie opzioni di collaterale includendo gli RWA, con l’obiettivo di stabilizzare la stablecoin DAI e diversificare il rischio.
 - **Centrifuge** ha annunciato l'avvio della tokenizzazione di fatture e altri asset, favorendo l’interconnessione tra finanza tradizionale e DeFi.
 
@@ -29,11 +30,13 @@ Questi sviluppi hanno già portato a speculazioni entro la community DeFi su una
 ## Opportunità e sfide
 
 Tra i principali vantaggi dell’integrazione dei RWA:
+
 - **Rendimenti potenzialmente più elevati**
 - Maggiore **stabilità del mercato**
 - Accesso facilitato a capitali istituzionali
 
 Tuttavia, non mancano le sfide:
+
 - **Regolamentazione** ancora incerta
 - Complessità nella gestione e valutazione degli asset fisici
 - Necessità di soluzioni tecnologiche affidabili per la tokenizzazione

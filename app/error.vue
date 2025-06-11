@@ -4,7 +4,6 @@ const props = defineProps<{
 }>()
 
 const { t } = useI18n()
-const localePath = useLocalePath()
 
 const isNotFound = computed(() => props.error?.statusCode === 404)
 

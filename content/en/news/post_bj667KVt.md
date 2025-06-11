@@ -56,4 +56,4 @@ Key questions remain regarding the balance between decentralization and efficien
 
 Optimism’s rapid user growth reaffirms the essential role of Layer 2 solutions in Ethereum’s future. As adoption accelerates, the DeFi space stands on the cusp of meaningful and sustainable expansion, with scalability, efficiency, and innovation at the forefront.
 
-*Could widespread Layer 2 reliance become the standard across Ethereum even post-ETH 2.0? The transformation may already be underway.*
+_Could widespread Layer 2 reliance become the standard across Ethereum even post-ETH 2.0? The transformation may already be underway._

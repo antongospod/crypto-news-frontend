@@ -29,6 +29,7 @@ This week, **MakerDAO** announced the expansion of its collateral base to featur
 ### Why RWAs Matter
 
 Integrating RWAs fits the broader DeFi **search for sustainable growth**:
+
 - Potential for fresh capital from conservative and institutional investors
 - Increased **TVL** as new collaterals flow into DeFi ecosystems
 - Enhanced market stability through less volatile backing
@@ -38,6 +39,7 @@ Some analysts forecast that if the RWA trend accelerates, DeFi’s TVL could **d
 ### Risks and Considerations
 
 The integration isn’t without obstacles:
+
 - **Regulatory scrutiny** remains a significant barrier.
 - Pricing, managing, and validating off-chain assets is complex.
 - Risks include **operational failure**, and potential for increased centralization.
@@ -47,11 +49,13 @@ Yet, industry sentiment leans positive. Investors view RWAs as a vital step to l
 ### Outlook
 
 Short-term, RWAs may:
+
 - Bolster yields
 - Attract new users
 - Diversify risk profiles
 
 Long-term, their presence could:
+
 - Spur regulatory awareness and compliance
 - Redefine DeFi’s relationship with global finance
 

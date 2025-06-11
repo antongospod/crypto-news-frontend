@@ -47,5 +47,5 @@ Secondo gli analisti, se il trend proseguirà, Optimism potrebbe accelerare ulte
 
 Il successo di Optimism conferma il ruolo strategico delle soluzioni Layer 2 nell’evoluzione di Ethereum e del settore DeFi. Man mano che queste tecnologie maturano, la loro integrazione diventerà sempre più centrale per utenti, sviluppatori e operatori.
 
-**Domanda ai lettori:**  
+**Domanda ai lettori:**
 L’affermazione delle Layer 2 come Optimism rappresenta una trasformazione definitiva nelle modalità di scalabilità di Ethereum, destinata a persistere anche con l’arrivo di Ethereum 2.0?

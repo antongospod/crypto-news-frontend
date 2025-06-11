@@ -38,6 +38,7 @@ To accelerate innovation, Avalanche’s subnet aims to foster collaborations wit
 ## Market Implications and Outlook
 
 Analysts anticipate several key outcomes:
+
 - **Short-term:** Potential increase in **Total Value Locked (TVL)** on Avalanche as projects seek AI-enabled competitive edges
 - **Medium-term:** Avalanche may emerge as a central hub for next-generation **DeFi-AI applications**
 - **Industry-wide:** Other blockchains are likely to pursue similar hybrid models, intensifying innovation across the sector
