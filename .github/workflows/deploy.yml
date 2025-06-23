@@ -45,7 +45,7 @@ jobs:
 
             # Собираем новый образ
             echo "🔨 Building new version..."
-            docker compose build nuxt-app
+            docker compose build --no-cache nuxt-app
 
             # Убиваем staging контейнер если есть
             echo "🧹 Cleaning up staging container..."
