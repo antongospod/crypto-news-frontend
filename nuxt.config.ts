@@ -11,7 +11,6 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n',
     '@nuxtjs/sitemap',
     '@unocss/nuxt',
-    '@nuxthq/studio',
   ],
   runtimeConfig: {
     public: {
@@ -105,12 +104,13 @@ export default defineNuxtConfig({
       type: 'sqlite',
       filename: process.env.NODE_ENV === 'production' ? '/tmp/contents.sqlite' : './.data/content/contents.sqlite',
     },
-  },
-  studio: {
-    gitInfo: {
-      name: 'crypto-news-frontend',
-      owner: 'antongospod',
-      url: 'https://github.com/antongospod/crypto-news-frontend',
+    preview: {
+      api: 'https://api.nuxt.studio',
+      gitInfo: {
+        name: 'crypto-news-frontend',
+        owner: 'antongospod',
+        url: 'https://github.com/antongospod/crypto-news-frontend',
+      },
     },
   },
   css: [
