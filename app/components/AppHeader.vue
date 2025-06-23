@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const links = useNavLinks(
-  { name: 'links.home', url: '/' },
   { name: 'links.news', url: '/news' },
+  { name: 'links.exclusive', url: '/exclusive' },
   { name: 'links.about', url: '/about' },
 )
 

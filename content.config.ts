@@ -30,5 +30,20 @@ export default defineContentConfig({
       source: 'news/**/*.md',
       schema: ArticleSchema,
     }),
+    exclusive_en: defineCollection({
+      type: 'page',
+      source: 'en/exclusive/**/*.md',
+      schema: ArticleSchema,
+    }),
+    exclusive_ru: defineCollection({
+      type: 'page',
+      source: 'ru/exclusive/**/*.md',
+      schema: ArticleSchema,
+    }),
+    exclusive_it: defineCollection({ // итальянский
+      type: 'page',
+      source: 'exclusive/**/*.md',
+      schema: ArticleSchema,
+    }),
   },
 })

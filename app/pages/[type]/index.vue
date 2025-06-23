@@ -1,5 +1,15 @@
 <script setup lang="ts">
+const route = useRoute()
 const { locale, t } = useI18n()
+
+// Определяем тип контента из роута
+const contentType = computed(() => route.params.type as string)
+
+// Проверяем валидность типа контента
+const validTypes = ['news', 'exclusive']
+if (!validTypes.includes(contentType.value)) {
+  throw createError({ statusCode: 404, statusMessage: 'Page Not Found' })
+}
 
 const page = ref(1)
 const limit = 16
@@ -7,9 +17,16 @@ const hasMore = ref(true)
 const isPending = ref(false)
 const sentinel = ref<HTMLElement | null>(null)
 
-useLangMeta('news.meta', '/images/home/cryptocenter-cover.webp')
+// Динамические мета-данные в зависимости от типа
+const metaKey = computed(() => `${contentType.value}.meta`)
+const coverImage = computed(() =>
+  contentType.value === 'exclusive'
+    ? '/images/home/exclusive-cover.webp'
+    : '/images/home/cryptocenter-cover.webp',
+)
 
-// Рекламные карточки
+useLangMeta(metaKey.value, coverImage.value)
+
 const adCards = [
   {
     id: 'defibank-card',
@@ -20,7 +37,7 @@ const adCards = [
     tag: 'Sponsored',
     date: new Date().toISOString(),
     isAd: true,
-    priority: 1, // Высокий приоритет
+    priority: 1,
   },
   {
     id: 'synergyslab-card',
@@ -31,18 +48,44 @@ const adCards = [
     tag: 'Sponsored',
     date: new Date().toISOString(),
     isAd: true,
-    priority: 2, // Средний приоритет
+    priority: 2,
   },
 ]
 
-const { data: initialPosts, refresh, pending } = await useAsyncData(
-  `news-posts-${locale.value}`,
-  () => queryCollection(locale.value)
+// Определяем название коллекции в зависимости от типа и локали
+function getCollectionName() {
+  if (contentType.value === 'exclusive') {
+    switch (locale.value) {
+      case 'en':
+        return 'exclusive_en'
+      case 'ru':
+        return 'exclusive_ru'
+      case 'it':
+        return 'exclusive_it'
+      default:
+        return 'exclusive_en'
+    }
+  }
+
+  // Для обычных новостей
+  return locale.value
+}
+
+// Типизированная функция для запроса коллекции
+async function fetchPosts(skip: number, limit: number) {
+  const collectionName = getCollectionName()
+
+  return await queryCollection(collectionName)
     .order('date', 'DESC')
-    .skip(0)
+    .skip(skip)
     .limit(limit)
     .select('title', 'description', 'img', 'date', 'tag', 'path', 'alt')
-    .all(),
+    .all()
+}
+
+const { data: initialPosts, refresh, pending } = await useAsyncData(
+  `${contentType.value}-posts-${locale.value}`,
+  () => fetchPosts(0, limit),
   {
     transform: data => data || [],
   },
@@ -110,7 +153,6 @@ function initializePosts() {
   const initial = unref(initialPosts)
   const newsItems = [...(initial || [])]
 
-  // Вставляем рекламные карточки в начальные посты
   posts.value = insertAdCards(newsItems, 0)
 
   if (newsItems.length > 0) {
@@ -133,12 +175,7 @@ async function loadMorePosts() {
 
   try {
     const offset = (page.value - 1) * limit
-    const newPosts = await queryCollection(locale.value)
-      .order('date', 'DESC')
-      .skip(offset)
-      .limit(limit)
-      .select('title', 'description', 'img', 'date', 'tag', 'path', 'alt')
-      .all()
+    const newPosts = await fetchPosts(offset, limit)
 
     if (!newPosts || newPosts.length === 0) {
       hasMore.value = false
@@ -149,7 +186,6 @@ async function loadMorePosts() {
       hasMore.value = false
     }
 
-    // Не вставляем рекламу при подгрузке последующих страниц
     const postsWithAds = offset === 0 ? insertAdCards(newPosts, 0) : newPosts
 
     posts.value.push(...postsWithAds)
@@ -210,10 +246,10 @@ onUnmounted(() => {
   <div class="mx-auto text-black sm:mb-10 space-y-10 2xl:px-35 lg:px-25 md:px-5 xl:px-28 dark:text-white">
     <div class="mx-4 mt-5 flex flex-col lg:mx-10 sm:(mx-10 mt-15) space-y-2">
       <h1 class="mb-0 text-3xl font-semibold sm:text-5xl">
-        {{ t('news.title') }}
+        {{ t(`${contentType}.title`) }}
       </h1>
       <p class="text-md break-words font-300 op70 sm:(w-2/3 text-xl) dark:text-gray-300">
-        {{ t('news.description') }}
+        {{ t(`${contentType}.description`) }}
       </p>
     </div>
 
@@ -246,8 +282,8 @@ onUnmounted(() => {
         v-for="(article, index) in posts"
         :key="article.isAd ? article.id : `${article.path}-${locale}`"
         animation="fade-up"
-        :delay="(index % limit) * 50"
-        :duration="800"
+        :delay="(index % limit) * 100"
+        :duration="1200"
       >
         <!-- Рекламная карточка -->
         <a
@@ -335,7 +371,7 @@ onUnmounted(() => {
 
     <div v-else class="min-h-[40vh] flex items-center justify-center">
       <p class="text-center text-lg op70">
-        {{ t('news.noPosts') }}
+        {{ t(`${contentType}.noPosts`) }}
       </p>
     </div>
 

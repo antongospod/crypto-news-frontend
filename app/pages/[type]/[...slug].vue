@@ -2,11 +2,40 @@
 const route = useRoute()
 const { locale } = useI18n()
 
+// Определяем тип контента из роута
+const contentType = route.params.type as string
+
+// Проверяем валидность типа контента
+const validTypes = ['news', 'exclusive']
+if (!validTypes.includes(contentType)) {
+  throw createError({ statusCode: 404, statusMessage: 'Page Not Found' })
+}
+
 const slug = route.path as string
 
+// Определяем название коллекции в зависимости от типа и локали
+function getCollectionName() {
+  if (contentType === 'exclusive') {
+    switch (locale.value) {
+      case 'en':
+        return 'exclusive_en'
+      case 'ru':
+        return 'exclusive_ru'
+      case 'it':
+        return 'exclusive_it'
+      default:
+        return 'exclusive_en'
+    }
+  }
+
+  // Для обычных новостей
+  return locale.value
+}
+
+// Получаем пост
 const { data: post } = await useAsyncData(
-  `post-${slug}-${locale.value}`,
-  () => queryCollection(locale.value)
+  `post-${contentType}-${slug}-${locale.value}`,
+  () => queryCollection(getCollectionName())
     .where('path', '=', slug)
     .select('path', 'title', 'body', 'toc', 'description', 'img', 'date', 'tag', 'alt', 'updated')
     .first(),
@@ -24,15 +53,18 @@ const seoDesc = post.value.description
 const seoImage = post.value.img ? post.value.img : undefined
 const titleSuffix = ' - Cryptocenter'
 
+// Добавляем префикс для эксклюзивного контента
+const seoPrefix = contentType === 'exclusive' ? 'Exclusive: ' : ''
+
 useSeoMeta({
-  title: seoTitle,
+  title: `${seoPrefix}${seoTitle}`,
   description: seoDesc,
-  ogTitle: `${seoTitle}${titleSuffix}`,
+  ogTitle: `${seoPrefix}${seoTitle}${titleSuffix}`,
   ogDescription: seoDesc,
   ogType: 'article',
   ogImage: seoImage,
   twitterCard: 'summary_large_image',
-  twitterTitle: `${seoTitle}${titleSuffix}`,
+  twitterTitle: `${seoPrefix}${seoTitle}${titleSuffix}`,
   twitterDescription: seoDesc,
   twitterImage: seoImage,
 })
