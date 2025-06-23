@@ -1,12 +1,13 @@
 ---
-title: "Aave Expands into Real World Assets"
-date: "2025-06-10"
-tag: "defi"
-img: "https://i.ibb.co/bgYGLFrv/postint.webp"
-description: "Aave brings real world assets to DeFi, bridging traditional finance and blockchain"
-alt: "Aave platform connecting blockchain with real assets"
+title: Aave Expands into Real World Assets
+date: 2025-06-10
+tag: defi
+img: https://i.ibb.co/bgYGLFrv/postint.webp
+description: Aave brings real world assets to DeFi, bridging traditional finance
+  and blockchain
+alt: Aave platform connecting blockchain with real assets
 toc: true
-source: "DeFiBank"
+source: DeFiBank
 feature: false
 ---
 
