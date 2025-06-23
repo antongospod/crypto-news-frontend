@@ -85,8 +85,11 @@ function insertAdCards(newsItems: any[], startIndex = 0) {
   }
 
   // Проверяем, чтобы карточки не были рядом (минимум 2 позиции между ними)
-  if (Math.abs(adPositions[0].position - adPositions[1].position) < 3) {
-    adPositions[1].position = adPositions[0].position + 3
+  // Добавляем проверку на существование элементов массива
+  if (adPositions.length >= 2 && adPositions[0] && adPositions[1]) {
+    if (Math.abs(adPositions[0].position - adPositions[1].position) < 3) {
+      adPositions[1].position = adPositions[0].position + 3
+    }
   }
 
   // Вставляем рекламу
@@ -146,8 +149,8 @@ async function loadMorePosts() {
       hasMore.value = false
     }
 
-    // Вставляем рекламу только при первой загрузке
-    const postsWithAds = startIndex === 0 ? insertAdCards(newPosts, 0) : newPosts
+    // Не вставляем рекламу при подгрузке последующих страниц
+    const postsWithAds = offset === 0 ? insertAdCards(newPosts, 0) : newPosts
 
     posts.value.push(...postsWithAds)
     page.value++
@@ -243,8 +246,8 @@ onUnmounted(() => {
         v-for="(article, index) in posts"
         :key="article.isAd ? article.id : `${article.path}-${locale}`"
         animation="fade-up"
-        :delay="(index % limit) * 100"
-        :duration="1200"
+        :delay="(index % limit) * 50"
+        :duration="800"
       >
         <!-- Рекламная карточка -->
         <a
