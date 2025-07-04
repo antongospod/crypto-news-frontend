@@ -1,4 +1,4 @@
-name: Blue-Green Deploy to VPS
+name: Deploy to VPS
 
 on:
   push:
@@ -11,6 +11,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       - name: Deploy to VPS
@@ -20,181 +21,111 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
           port: ${{ secrets.PORT }}
+          command_timeout: 20m
           script: |
+            set -e
+            
             cd /opt/cryptocenter
-            echo "🚀 Starting Blue-Green deployment..."
-
-            # Обновляем код
-            git stash push -m "Auto-stash $(date)" || true
-            git reset --hard HEAD
+            echo "🚀 Starting deployment..."
+            
+            # Сохраняем изменения и обновляем код
+            git stash || true
             git pull origin master
-
-            # Проверяем какой контейнер сейчас активен
-            NGINX_CONFIG_CONTENT=$(cat nginx.conf)
-            if echo "$NGINX_CONFIG_CONTENT" | grep -q "server nuxt-app:3000.*backup"; then
-              # nuxt-app на backup, значит активен staging
-              CURRENT_ACTIVE="staging"
-              NEW_ACTIVE="main"
-              echo "🔵 Current: Staging → Deploying: Main"
-            else
-              # nuxt-app активен, переключаемся на staging  
-              CURRENT_ACTIVE="main"
-              NEW_ACTIVE="staging"
-              echo "🟢 Current: Main → Deploying: Staging"
-            fi
-
+            
             # Собираем новый образ
-            echo "🔨 Building new version..."
+            echo "🔨 Building Docker image..."
             docker compose build nuxt-app
-
-            # Убиваем staging контейнер если есть
-            echo "🧹 Cleaning up staging container..."
-            docker stop nuxt-app-staging 2>/dev/null || true
-            docker rm -f nuxt-app-staging 2>/dev/null || true
-
-            if [ "$NEW_ACTIVE" = "main" ]; then
-              # Разворачиваем на основной контейнер
-              echo "🚀 Starting main container..."
-              docker compose up -d nuxt-app
             
-              # Ждем запуска
-              echo "⏳ Waiting for main container to start..."
-              sleep 20
-            
-              # Health check
-              echo "🔍 Health checking main container..."
-              HEALTH_OK=false
-              for i in {1..10}; do
-                if docker exec nginx wget -qO- http://nuxt-app:3000 >/dev/null 2>&1; then
-                  echo "✅ Main container is healthy"
-                  HEALTH_OK=true
-                  break
-                fi
-                echo "⏳ Attempt $i/10 - waiting..."
-                sleep 3
-              done
-            
-              if [ "$HEALTH_OK" != "true" ]; then
-                echo "❌ Main container failed health check!"
-                docker logs nuxt-app --tail 50
-                exit 1
-              fi
-            
-              # Переключаем nginx на основной контейнер
-              echo "🔄 Switching nginx to main container..."
-              cp nginx.conf nginx.conf.backup
-            
-              # Делаем nuxt-app primary, а staging backup
-              sed -i 's/server nuxt-app:3000.*backup;/server nuxt-app:3000 max_fails=3 fail_timeout=30s;/' nginx.conf
-              sed -i 's/server nuxt-app-staging:3000[^;]*;/server nuxt-app-staging:3000 max_fails=3 fail_timeout=30s backup;/' nginx.conf
-            
-            else
-              # Разворачиваем на staging контейнер
-              echo "🚀 Starting staging container..."
-              docker run -d \
-                --name nuxt-app-staging \
-                --network cryptocenter_app-network \
-                -e NODE_ENV=production \
-                -e NUXT_PUBLIC_SITE_NAME=CryptoCenter \
-                -e NUXT_PUBLIC_SITE_URL=https://cryptocenter.finance \
-                cryptocenter-nuxt-app
-
-              # Ждем запуска
-              echo "⏳ Waiting for staging container to start..."
-              sleep 20
-
-              # Health check staging контейнера
-              echo "🔍 Health checking staging container..."
-              HEALTH_OK=false
-              for i in {1..10}; do
-                if docker exec nginx wget -qO- http://nuxt-app-staging:3000 >/dev/null 2>&1; then
-                  echo "✅ Staging container is healthy"
-                  HEALTH_OK=true
-                  break
-                fi
-                echo "⏳ Attempt $i/10 - waiting..."
-                sleep 3
-              done
-
-              if [ "$HEALTH_OK" != "true" ]; then
-                echo "❌ Staging container failed health check!"
-                docker logs nuxt-app-staging --tail 50
-                docker stop nuxt-app-staging
-                docker rm nuxt-app-staging
-                exit 1
-              fi
-
-              # Переключаем nginx на staging контейнер
-              echo "🔄 Switching nginx to staging container..."
-              cp nginx.conf nginx.conf.backup
-            
-              # Делаем staging primary, а nuxt-app backup
-              sed -i 's/server nuxt-app-staging:3000.*backup;/server nuxt-app-staging:3000 max_fails=3 fail_timeout=30s;/' nginx.conf
-              sed -i 's/server nuxt-app:3000[^;]*;/server nuxt-app:3000 max_fails=3 fail_timeout=30s backup;/' nginx.conf
+            # Проверяем что nginx работает
+            if ! docker ps | grep -q nginx; then
+              echo "⚠️  Nginx is not running, starting it..."
+              docker compose up -d nginx
+              sleep 5
             fi
-
-            # Проверяем nginx конфигурацию
-            if ! docker exec nginx nginx -t; then
-              echo "❌ Invalid nginx configuration!"
-              cp nginx.conf.backup nginx.conf
+            
+            # Останавливаем старые staging контейнеры если есть
+            docker stop nuxt-app-staging 2>/dev/null || true
+            docker rm nuxt-app-staging 2>/dev/null || true
+            
+            # Запускаем новый контейнер как staging
+            echo "🚀 Starting new container..."
+            docker run -d \
+              --name nuxt-app-staging \
+              --network cryptocenter_app-network \
+              --restart unless-stopped \
+              -e NODE_ENV=production \
+              -e NUXT_PUBLIC_SITE_NAME=CryptoCenter \
+              -e NUXT_PUBLIC_SITE_URL=https://cryptocenter.finance \
+              cryptocenter-nuxt-app:latest
+            
+            # Ждем пока контейнер запустится
+            echo "⏳ Waiting for container to be ready..."
+            sleep 15
+            
+            # Проверяем что новый контейнер работает
+            ATTEMPTS=0
+            MAX_ATTEMPTS=20
+            while [ $ATTEMPTS -lt $MAX_ATTEMPTS ]; do
+              if docker exec nginx wget -qO- http://nuxt-app-staging:3000 >/dev/null 2>&1; then
+                echo "✅ New container is healthy"
+                break
+              fi
+              ATTEMPTS=$((ATTEMPTS + 1))
+              echo "⏳ Health check attempt $ATTEMPTS/$MAX_ATTEMPTS..."
+              sleep 3
+            done
+            
+            if [ $ATTEMPTS -eq $MAX_ATTEMPTS ]; then
+              echo "❌ New container failed health checks"
+              docker logs nuxt-app-staging --tail 50
+              docker stop nuxt-app-staging
+              docker rm nuxt-app-staging
               exit 1
             fi
-
-            # Перезагружаем nginx
-            docker exec nginx nginx -s reload
-
-            # Важная проверка: ждем чтобы nginx применил конфигурацию
+            
+            # Останавливаем старый контейнер и запускаем новый
+            echo "🔄 Switching containers..."
+            docker compose stop nuxt-app
+            docker compose rm -f nuxt-app
+            docker compose up -d nuxt-app
+            
+            # Ждем немного
             sleep 5
-
-            # Проверяем что сайт доступен (более надежная проверка)
+            
+            # Проверяем сайт
             echo "🔍 Checking site availability..."
             SITE_OK=false
-            for i in {1..5}; do
-              HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://cryptocenter.finance 2>/dev/null || echo "000")
-              if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 400 ]; then
+            for i in {1..10}; do
+              HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -m 10 https://cryptocenter.finance || echo "000")
+              if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "301" ] || [ "$HTTP_CODE" = "302" ]; then
                 echo "✅ Site is accessible (HTTP $HTTP_CODE)"
                 SITE_OK=true
                 break
               fi
-              echo "⏳ Attempt $i/5 - Got HTTP $HTTP_CODE, retrying..."
-              sleep 3
+              echo "⏳ Attempt $i/10 - HTTP $HTTP_CODE"
+              sleep 2
             done
-
-            if [ "$SITE_OK" != "true" ]; then
-              echo "❌ Site check failed, rolling back..."
-              cp nginx.conf.backup nginx.conf
-              docker exec nginx nginx -s reload
             
-              if [ "$NEW_ACTIVE" = "staging" ]; then
-                docker stop nuxt-app-staging 2>/dev/null || true
-                docker rm nuxt-app-staging 2>/dev/null || true
-              fi
+            if [ "$SITE_OK" = "false" ]; then
+              echo "❌ Site is not accessible!"
+              docker logs nuxt-app --tail 50
               exit 1
             fi
-
-            # Очищаем старую версию
-            if [ "$NEW_ACTIVE" = "main" ]; then
-              echo "🛑 Stopping old staging container..."
-              # Staging контейнер уже удален в начале
-              echo "✅ Main deployment completed!"
-            else
-              echo "🛑 Stopping old main container..."
-              docker compose stop nuxt-app 2>/dev/null || true
-              echo "✅ Staging deployment completed!"
-            fi
-
+            
+            # Удаляем staging контейнер
+            docker stop nuxt-app-staging 2>/dev/null || true
+            docker rm nuxt-app-staging 2>/dev/null || true
+            
             # Обновляем остальные сервисы
             echo "🔄 Updating other services..."
-            docker compose up -d --no-deps nginx prometheus grafana cadvisor node-exporter
-
-            # Финальный статус
-            echo "📊 Final status:"
-            docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
-
+            docker compose up -d nginx prometheus grafana cadvisor node-exporter
+            
             # Очистка
             echo "🧹 Cleaning up..."
             docker image prune -f
-
-            echo "✅ Blue-Green deployment completed!"
-            echo "🌐 Site available at: https://cryptocenter.finance"
-            echo "🎯 Active version: $NEW_ACTIVE"
+            
+            # Статус
+            echo ""
+            echo "✅ Deployment completed!"
+            echo "📊 Container status:"
+            docker ps --format "table {{.Names}}\t{{.Status}}" | grep -E "(nginx|nuxt-app)" || true
